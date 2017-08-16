@@ -9,9 +9,19 @@
 			<key>orderHint</key>
 			<integer>0</integer>
 		</dict>
+		<key>BLEManagerTests.xcscheme</key>
+		<dict>
+			<key>orderHint</key>
+			<integer>1</integer>
+		</dict>
 	</dict>
 	<key>SuppressBuildableAutocreation</key>
 	<dict>
+		<key>17BA5F9F1EFFE13A004A06B2</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
 		<key>17D069311EF9208500E6211B</key>
 		<dict>
 			<key>primary</key>

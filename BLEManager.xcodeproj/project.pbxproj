@@ -9,28 +9,53 @@
 /* Begin PBXBuildFile section */
 		174CC02A1EFA4573006A7C28 /* ErrorCodes.plist in Resources */ = {isa = PBXBuildFile; fileRef = 174CC0291EFA4573006A7C28 /* ErrorCodes.plist */; };
 		174CC02E1EFA45C5006A7C28 /* ErrorHandler.m in Sources */ = {isa = PBXBuildFile; fileRef = 174CC02C1EFA45C5006A7C28 /* ErrorHandler.m */; };
-		174CC0401EFA6F1B006A7C28 /* ScannerManager.m in Headers */ = {isa = PBXBuildFile; fileRef = 17D0693E1EF9209C00E6211B /* ScannerManager.m */; };
 		174CC0411EFA6F1B006A7C28 /* ErrorCodes.h in Headers */ = {isa = PBXBuildFile; fileRef = 17D069411EF928F400E6211B /* ErrorCodes.h */; };
 		174CC0421EFA6F1B006A7C28 /* ErrorHandler.h in Headers */ = {isa = PBXBuildFile; fileRef = 174CC02B1EFA45C5006A7C28 /* ErrorHandler.h */; };
-		174CC0431EFA6F1B006A7C28 /* ErrorHandler.m in Headers */ = {isa = PBXBuildFile; fileRef = 174CC02C1EFA45C5006A7C28 /* ErrorHandler.m */; };
-		17D069371EF9208500E6211B /* BLEManager.h in Headers */ = {isa = PBXBuildFile; fileRef = 17D069351EF9208500E6211B /* BLEManager.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		17D0693F1EF9209C00E6211B /* ScannerManager.h in Headers */ = {isa = PBXBuildFile; fileRef = 17D0693D1EF9209C00E6211B /* ScannerManager.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		17D069401EF9209C00E6211B /* ScannerManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 17D0693E1EF9209C00E6211B /* ScannerManager.m */; };
+		17BA5FA51EFFE13A004A06B2 /* BLEManager.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 17D069321EF9208500E6211B /* BLEManager.framework */; };
+		17BA5FAC1EFFE4F1004A06B2 /* CentralManagerTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 17BA5FAB1EFFE4F1004A06B2 /* CentralManagerTests.m */; };
+		17D069371EF9208500E6211B /* BLEManager.h in Headers */ = {isa = PBXBuildFile; fileRef = 17D069351EF9208500E6211B /* BLEManager.h */; };
+		17D0693F1EF9209C00E6211B /* CentralManager.h in Headers */ = {isa = PBXBuildFile; fileRef = 17D0693D1EF9209C00E6211B /* CentralManager.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		17D069401EF9209C00E6211B /* CentralManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 17D0693E1EF9209C00E6211B /* CentralManager.m */; };
+		17F61F011EFF86C4002CDAA8 /* PeripheralManager.h in Headers */ = {isa = PBXBuildFile; fileRef = 17F61EFF1EFF86C4002CDAA8 /* PeripheralManager.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		17F61F021EFF86C4002CDAA8 /* PeripheralManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 17F61F001EFF86C4002CDAA8 /* PeripheralManager.m */; };
 /* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		17BA5FA61EFFE13A004A06B2 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 17D069291EF9208500E6211B /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 17D069311EF9208500E6211B;
+			remoteInfo = BLEManager;
+		};
+/* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
 		174CC0291EFA4573006A7C28 /* ErrorCodes.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = ErrorCodes.plist; sourceTree = "<group>"; };
 		174CC02B1EFA45C5006A7C28 /* ErrorHandler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ErrorHandler.h; sourceTree = "<group>"; };
 		174CC02C1EFA45C5006A7C28 /* ErrorHandler.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ErrorHandler.m; sourceTree = "<group>"; };
+		17BA5FA01EFFE13A004A06B2 /* BLEManagerTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = BLEManagerTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		17BA5FA41EFFE13A004A06B2 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		17BA5FAB1EFFE4F1004A06B2 /* CentralManagerTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CentralManagerTests.m; sourceTree = "<group>"; };
 		17D069321EF9208500E6211B /* BLEManager.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = BLEManager.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		17D069351EF9208500E6211B /* BLEManager.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = BLEManager.h; sourceTree = "<group>"; };
 		17D069361EF9208500E6211B /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		17D0693D1EF9209C00E6211B /* ScannerManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ScannerManager.h; sourceTree = "<group>"; };
-		17D0693E1EF9209C00E6211B /* ScannerManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ScannerManager.m; sourceTree = "<group>"; };
+		17D0693D1EF9209C00E6211B /* CentralManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CentralManager.h; sourceTree = "<group>"; };
+		17D0693E1EF9209C00E6211B /* CentralManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CentralManager.m; sourceTree = "<group>"; };
 		17D069411EF928F400E6211B /* ErrorCodes.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ErrorCodes.h; sourceTree = "<group>"; };
+		17F61EFF1EFF86C4002CDAA8 /* PeripheralManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PeripheralManager.h; sourceTree = "<group>"; };
+		17F61F001EFF86C4002CDAA8 /* PeripheralManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PeripheralManager.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
+		17BA5F9D1EFFE13A004A06B2 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				17BA5FA51EFFE13A004A06B2 /* BLEManager.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		17D0692E1EF9208500E6211B /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
@@ -55,16 +80,26 @@
 		174CC0301EFA45D4006A7C28 /* Manager */ = {
 			isa = PBXGroup;
 			children = (
-				17D0693D1EF9209C00E6211B /* ScannerManager.h */,
-				17D0693E1EF9209C00E6211B /* ScannerManager.m */,
+				17F61EFE1EFF86A5002CDAA8 /* Peripheral */,
+				17F61EFD1EFF869E002CDAA8 /* Central */,
 			);
 			name = Manager;
+			sourceTree = "<group>";
+		};
+		17BA5FA11EFFE13A004A06B2 /* BLEManagerTests */ = {
+			isa = PBXGroup;
+			children = (
+				17BA5FA41EFFE13A004A06B2 /* Info.plist */,
+				17BA5FAB1EFFE4F1004A06B2 /* CentralManagerTests.m */,
+			);
+			path = BLEManagerTests;
 			sourceTree = "<group>";
 		};
 		17D069281EF9208500E6211B = {
 			isa = PBXGroup;
 			children = (
 				17D069341EF9208500E6211B /* BLEManager */,
+				17BA5FA11EFFE13A004A06B2 /* BLEManagerTests */,
 				17D069331EF9208500E6211B /* Products */,
 			);
 			sourceTree = "<group>";
@@ -73,6 +108,7 @@
 			isa = PBXGroup;
 			children = (
 				17D069321EF9208500E6211B /* BLEManager.framework */,
+				17BA5FA01EFFE13A004A06B2 /* BLEManagerTests.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -88,6 +124,24 @@
 			path = BLEManager;
 			sourceTree = "<group>";
 		};
+		17F61EFD1EFF869E002CDAA8 /* Central */ = {
+			isa = PBXGroup;
+			children = (
+				17D0693D1EF9209C00E6211B /* CentralManager.h */,
+				17D0693E1EF9209C00E6211B /* CentralManager.m */,
+			);
+			name = Central;
+			sourceTree = "<group>";
+		};
+		17F61EFE1EFF86A5002CDAA8 /* Peripheral */ = {
+			isa = PBXGroup;
+			children = (
+				17F61EFF1EFF86C4002CDAA8 /* PeripheralManager.h */,
+				17F61F001EFF86C4002CDAA8 /* PeripheralManager.m */,
+			);
+			name = Peripheral;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXHeadersBuildPhase section */
@@ -95,18 +149,35 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				17D0693F1EF9209C00E6211B /* ScannerManager.h in Headers */,
+				17D0693F1EF9209C00E6211B /* CentralManager.h in Headers */,
+				17F61F011EFF86C4002CDAA8 /* PeripheralManager.h in Headers */,
 				17D069371EF9208500E6211B /* BLEManager.h in Headers */,
-				174CC0401EFA6F1B006A7C28 /* ScannerManager.m in Headers */,
 				174CC0411EFA6F1B006A7C28 /* ErrorCodes.h in Headers */,
 				174CC0421EFA6F1B006A7C28 /* ErrorHandler.h in Headers */,
-				174CC0431EFA6F1B006A7C28 /* ErrorHandler.m in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXHeadersBuildPhase section */
 
 /* Begin PBXNativeTarget section */
+		17BA5F9F1EFFE13A004A06B2 /* BLEManagerTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 17BA5FA81EFFE13A004A06B2 /* Build configuration list for PBXNativeTarget "BLEManagerTests" */;
+			buildPhases = (
+				17BA5F9C1EFFE13A004A06B2 /* Sources */,
+				17BA5F9D1EFFE13A004A06B2 /* Frameworks */,
+				17BA5F9E1EFFE13A004A06B2 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				17BA5FA71EFFE13A004A06B2 /* PBXTargetDependency */,
+			);
+			name = BLEManagerTests;
+			productName = BLEManagerTests;
+			productReference = 17BA5FA01EFFE13A004A06B2 /* BLEManagerTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
 		17D069311EF9208500E6211B /* BLEManager */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = 17D0693A1EF9208500E6211B /* Build configuration list for PBXNativeTarget "BLEManager" */;
@@ -134,6 +205,11 @@
 				LastUpgradeCheck = 0830;
 				ORGANIZATIONNAME = "Hassan Shahbazi";
 				TargetAttributes = {
+					17BA5F9F1EFFE13A004A06B2 = {
+						CreatedOnToolsVersion = 8.3.3;
+						DevelopmentTeam = 4A6ZQ29Y2F;
+						ProvisioningStyle = Automatic;
+					};
 					17D069311EF9208500E6211B = {
 						CreatedOnToolsVersion = 8.3.3;
 						LastSwiftMigration = 0830;
@@ -154,11 +230,19 @@
 			projectRoot = "";
 			targets = (
 				17D069311EF9208500E6211B /* BLEManager */,
+				17BA5F9F1EFFE13A004A06B2 /* BLEManagerTests */,
 			);
 		};
 /* End PBXProject section */
 
 /* Begin PBXResourcesBuildPhase section */
+		17BA5F9E1EFFE13A004A06B2 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		17D069301EF9208500E6211B /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -170,18 +254,57 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
+		17BA5F9C1EFFE13A004A06B2 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				17BA5FAC1EFFE4F1004A06B2 /* CentralManagerTests.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		17D0692D1EF9208500E6211B /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				17D069401EF9209C00E6211B /* ScannerManager.m in Sources */,
+				17D069401EF9209C00E6211B /* CentralManager.m in Sources */,
+				17F61F021EFF86C4002CDAA8 /* PeripheralManager.m in Sources */,
 				174CC02E1EFA45C5006A7C28 /* ErrorHandler.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXSourcesBuildPhase section */
 
+/* Begin PBXTargetDependency section */
+		17BA5FA71EFFE13A004A06B2 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 17D069311EF9208500E6211B /* BLEManager */;
+			targetProxy = 17BA5FA61EFFE13A004A06B2 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
 /* Begin XCBuildConfiguration section */
+		17BA5FA91EFFE13A004A06B2 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				DEVELOPMENT_TEAM = 4A6ZQ29Y2F;
+				INFOPLIST_FILE = BLEManagerTests/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = com.vancosys.BLEManagerTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Debug;
+		};
+		17BA5FAA1EFFE13A004A06B2 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				DEVELOPMENT_TEAM = 4A6ZQ29Y2F;
+				INFOPLIST_FILE = BLEManagerTests/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = com.vancosys.BLEManagerTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Release;
+		};
 		17D069381EF9208500E6211B /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -324,6 +447,15 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
+		17BA5FA81EFFE13A004A06B2 /* Build configuration list for PBXNativeTarget "BLEManagerTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				17BA5FA91EFFE13A004A06B2 /* Debug */,
+				17BA5FAA1EFFE13A004A06B2 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
 		17D0692C1EF9208500E6211B /* Build configuration list for PBXProject "BLEManager" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (

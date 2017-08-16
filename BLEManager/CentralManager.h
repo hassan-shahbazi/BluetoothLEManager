@@ -9,18 +9,22 @@
 #import <CoreBluetooth/CoreBluetooth.h>
 #import <Foundation/Foundation.h>
 
-@protocol BLEScannerManagerDelegate <NSObject>
+@protocol BLECentralManagerDelegate <NSObject>
 @optional
 - (void)CentralStateChanged:(CBCentralManagerState )state;
 - (void)DongleFound:(NSString *)macAddress;
+- (void)PairedDongles:(NSArray *)pairedList;
 - (void)DongleConnected;
+- (void)DongleDisconnected;
 - (void)DongleRecived:(NSData *)data;
+- (void)DonglePairingFailed;
 - (void)ErrorOccured:(NSError *)error;
 - (void)ShouldLockDevice;
-
+- (void)RSSIRead:(NSInteger )RSSI;
+- (void)DataTransfered;
 @end
 
-@interface ScannerManager : NSObject <CBCentralManagerDelegate, CBPeripheralDelegate>
+@interface CentralManager : NSObject <CBCentralManagerDelegate, CBPeripheralDelegate>
 
 @property (nonatomic, strong) NSArray *ServiceUUIDs;
 @property (nonatomic, strong) CBUUID *ServiceCharacteristic;
@@ -29,17 +33,26 @@
 @property (nonatomic, assign) NSInteger RSSI_lockValue;
 @property (nonatomic, assign) NSInteger RSSI_delay;
 @property (nonatomic, assign) NSInteger RSSI_filter;
-@property (nonatomic, assign) BOOL AutoConnect;
+@property (nonatomic, strong) NSMutableArray *AutoConnectDongles;
 @property (nonatomic, assign) BOOL Logging;
-@property (nonatomic, weak) id<BLEScannerManagerDelegate> delegate;
+@property (nonatomic, weak) id<BLECentralManagerDelegate> delegate;
 
-+ (ScannerManager *)SharedInstance;
++ (CentralManager *)SharedInstance;
 
 - (void)Connect;
+
+- (void)GetPairedList;
+
 - (void)Disconnect;
+
 - (void)StartScanning;
+
 - (void)StopScanning;
+
 - (void)ReadRSSI;
+
+- (void)TestPairing;
+
 - (void)Write:(NSData *)data;
 
 - (NSString *)GetConnectedMacAddress;

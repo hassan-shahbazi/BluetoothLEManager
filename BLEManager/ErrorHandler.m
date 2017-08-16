@@ -27,6 +27,13 @@
     return error;
 }
 
++ (NSError *)PairingError {
+    NSError *error = [[NSError alloc] initWithDomain:@"CBATTErrorDomain"
+                                                code:15
+                                            userInfo:@{ NSLocalizedDescriptionKey : @"Encryption is insufficient" }];
+    return error;
+}
+
 + (NSDictionary *)GetAllErrors {
     NSString* plistPath = [[NSBundle bundleForClass:[self class]]
                            pathForResource:@"ErrorCodes" ofType:@"plist"];

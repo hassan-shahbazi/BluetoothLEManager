@@ -12,4 +12,6 @@
 
 + (NSError *)GenerateErrorWithCode:(NSInteger )errorCode;
 
++ (NSError *)PairingError;
+
 @end

@@ -18,7 +18,7 @@ Pod::Spec.new do |s|
   s.name         = "BLEManager"
   s.version      = "1.0.0"
   s.summary      = "BLEManager is a library to manage BLE-related tasks"
-  s.source       = { :git => "https://hassaniiii@bitbucket.org/iosAdditional/ble-manager.git", :branch => "dev" }
+  s.source       = { :git => "https://hassaniiii@bitbucket.org/iosAdditional/ble-manager.git", :branch => "master" }
 
   # This description is used to generate tags and improve search results.
   #   * Think: What does it do? Why did you write it? What is the focus?

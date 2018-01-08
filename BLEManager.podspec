@@ -18,7 +18,7 @@ Pod::Spec.new do |s|
   s.name         = "BLEManager"
   s.version      = "1.0.0"
   s.summary      = "BLEManager is a library to manage BLE-related tasks"
-  s.source       = { :git => "https://hassaniiii@bitbucket.org/iosAdditional/ble-manager.git", :branch => "master" }
+  s.source       = { :git => "https://github.com/Hassaniiii/BLEManager.git", :branch => "master" }
 
   # This description is used to generate tags and improve search results.
   #   * Think: What does it do? Why did you write it? What is the focus?
@@ -85,7 +85,7 @@ Pod::Spec.new do |s|
   #  Not including the public_header_files will make all headers public.
   #
 
-  s.source_files  = "Classes", "BLEManager/Classes/*.{h,m,plist}", "BLEManager.podspec"
+  s.source_files  = "Classes", "BLEManager/Classes/*.{h,m,plist}"
   s.exclude_files = "Classes/Exclude"
 
   # s.public_header_files = "Classes/**/*.h"

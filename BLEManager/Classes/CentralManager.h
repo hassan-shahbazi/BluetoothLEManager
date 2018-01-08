@@ -18,7 +18,7 @@
 - (void)DongleDisconnected;
 - (void)DongleRecived:(NSData *)data;
 - (void)DonglePairingFailed;
-- (void)ErrorOccured:(NSError *)error;
+- (void)Error:(NSError *)error;
 - (void)ShouldLockDevice;
 - (void)RSSIRead:(NSInteger )RSSI;
 - (void)DataTransfered;

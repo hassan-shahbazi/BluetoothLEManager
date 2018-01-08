@@ -59,15 +59,19 @@
     [_delegate PeripheralStateChanged:(CBPeripheralManagerState )peripheral.state];
 }
 - (void)peripheralManager:(CBPeripheralManager *)peripheral didAddService:(CBService *)service error:(NSError *)error {
-    if (error != nil)
-        [_delegate ErrorOccured:error];
+    if (error != nil) {
+        if ([_delegate respondsToSelector:@selector(Error:)])
+            [_delegate Error:error];
+    }
     else
         [_peripheralManager startAdvertising:@{CBAdvertisementDataLocalNameKey: _LocalName,
                                                CBAdvertisementDataServiceUUIDsKey: @[service.UUID]}];
 }
 - (void)peripheralManagerDidStartAdvertising:(CBPeripheralManager *)peripheral error:(NSError *)error {
-    if (error != nil)
-        [_delegate ErrorOccured:error];
+    if (error != nil) {
+        if ([_delegate respondsToSelector:@selector(Error:)])
+            [_delegate Error:error];
+    }
     else
         [_delegate PeripheralStartAdvertising];
 }

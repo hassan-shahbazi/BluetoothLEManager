@@ -13,7 +13,7 @@
 @optional
 - (void)PeripheralStateChanged:(CBPeripheralManagerState )state;
 - (void)PeripheralStartAdvertising;
-- (void)ErrorOccured:(NSError *)error;
+- (void)Error:(NSError *)error;
 @end
 
 @interface PeripheralManager : NSObject <CBPeripheralManagerDelegate>

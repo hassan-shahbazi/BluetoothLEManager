@@ -11,7 +11,7 @@
 
 @protocol BLECentralManagerDelegate <NSObject>
 @optional
-- (void)CentralStateChanged:(CBCentralManagerState )state;
+- (void)CentralStateChanged:(CBManagerState )state;
 - (void)DongleFound:(NSString *)macAddress;
 - (void)PairedDongles:(NSArray *)pairedList;
 - (void)DongleConnected;

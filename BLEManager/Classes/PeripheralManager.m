@@ -56,7 +56,7 @@
 
 #pragma mark - Peripheral Manager Delegate
 - (void)peripheralManagerDidUpdateState:(CBPeripheralManager *)peripheral {
-    [_delegate PeripheralStateChanged:(CBPeripheralManagerState )peripheral.state];
+    [_delegate PeripheralStateChanged:peripheral.state];
 }
 - (void)peripheralManager:(CBPeripheralManager *)peripheral didAddService:(CBService *)service error:(NSError *)error {
     if (error != nil) {

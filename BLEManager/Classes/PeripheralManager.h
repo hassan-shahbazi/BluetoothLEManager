@@ -11,7 +11,7 @@
 
 @protocol BLEPeripheralManagerDelegate <NSObject>
 @optional
-- (void)PeripheralStateChanged:(CBPeripheralManagerState )state;
+- (void)PeripheralStateChanged:(CBManagerState )state;
 - (void)PeripheralStartAdvertising;
 - (void)Error:(NSError *)error;
 @end

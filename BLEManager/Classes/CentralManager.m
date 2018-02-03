@@ -167,7 +167,7 @@
 #pragma mark - Central Manager Delegate
 - (void)centralManagerDidUpdateState:(CBCentralManager *)central {
     if ([_delegate respondsToSelector:@selector(CentralStateChanged:)])
-        [_delegate CentralStateChanged:(CBCentralManagerState )central.state];
+        [_delegate CentralStateChanged:central.state];
 }
 - (void)centralManager:(CBCentralManager *)central didDiscoverPeripheral:(CBPeripheral *)peripheral advertisementData:(NSDictionary<NSString *,id> *)advertisementData RSSI:(NSNumber *)RSSI {
     if (!peripheral.name || [peripheral.name isEqualToString:@""]) {

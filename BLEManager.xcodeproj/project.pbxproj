@@ -18,6 +18,8 @@
 		17217692200258F0006D7559 /* ErrorHandler.m in Sources */ = {isa = PBXBuildFile; fileRef = 1721768E200258F0006D7559 /* ErrorHandler.m */; };
 		17BA5FA51EFFE13A004A06B2 /* BLEManager.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 17D069321EF9208500E6211B /* BLEManager.framework */; };
 		17BA5FAC1EFFE4F1004A06B2 /* CentralManagerTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 17BA5FAB1EFFE4F1004A06B2 /* CentralManagerTests.m */; };
+		5C7BD0712029DC28007207B5 /* MyCharacterstic.h in Headers */ = {isa = PBXBuildFile; fileRef = 5C7BD06F2029DC28007207B5 /* MyCharacterstic.h */; };
+		5C7BD0722029DC28007207B5 /* MyCharacterstic.m in Sources */ = {isa = PBXBuildFile; fileRef = 5C7BD0702029DC28007207B5 /* MyCharacterstic.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -45,6 +47,8 @@
 		17BA5FAB1EFFE4F1004A06B2 /* CentralManagerTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CentralManagerTests.m; sourceTree = "<group>"; };
 		17D069321EF9208500E6211B /* BLEManager.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = BLEManager.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		17D069361EF9208500E6211B /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		5C7BD06F2029DC28007207B5 /* MyCharacterstic.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = MyCharacterstic.h; path = Classes/MyCharacterstic.h; sourceTree = "<group>"; };
+		5C7BD0702029DC28007207B5 /* MyCharacterstic.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; name = MyCharacterstic.m; path = Classes/MyCharacterstic.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -136,10 +140,20 @@
 		17F61EFE1EFF86A5002CDAA8 /* Peripheral */ = {
 			isa = PBXGroup;
 			children = (
+				5C7BD06E2029DC08007207B5 /* CustomCharacterstic */,
 				17217685200258DD006D7559 /* PeripheralManager.h */,
 				17217686200258DD006D7559 /* PeripheralManager.m */,
 			);
 			name = Peripheral;
+			sourceTree = "<group>";
+		};
+		5C7BD06E2029DC08007207B5 /* CustomCharacterstic */ = {
+			isa = PBXGroup;
+			children = (
+				5C7BD06F2029DC28007207B5 /* MyCharacterstic.h */,
+				5C7BD0702029DC28007207B5 /* MyCharacterstic.m */,
+			);
+			name = CustomCharacterstic;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -154,6 +168,7 @@
 				17217687200258DD006D7559 /* PeripheralManager.h in Headers */,
 				17217691200258F0006D7559 /* ErrorCodes.h in Headers */,
 				1721768A200258E6006D7559 /* BLEManager.h in Headers */,
+				5C7BD0712029DC28007207B5 /* MyCharacterstic.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -268,6 +283,7 @@
 			files = (
 				17217688200258DD006D7559 /* PeripheralManager.m in Sources */,
 				17217692200258F0006D7559 /* ErrorHandler.m in Sources */,
+				5C7BD0722029DC28007207B5 /* MyCharacterstic.m in Sources */,
 				17217684200258D2006D7559 /* CentralManager.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

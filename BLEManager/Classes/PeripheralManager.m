@@ -34,15 +34,8 @@
 - (void)StartAdvertising {
     _bluetoothService = [[CBMutableService alloc] initWithType:_ServiceUUID primary:YES];
     NSMutableArray *characteristics = [[NSMutableArray alloc] init];
-    for (Characteristic *characteristic in _ServiceCharacteristics) {
-        NSData *data = [[NSData alloc] initWithBase64EncodedString:[self ConvertStringToBase64:characteristic.Value]
-                                                           options:NSDataBase64DecodingIgnoreUnknownCharacters];
-        CBMutableCharacteristic *characteristicOBJ = [[CBMutableCharacteristic alloc]
-                                                initWithType: characteristic.UUID
-                                                properties: CBCharacteristicPropertyRead
-                                                value: data
-                                                permissions: characteristic.Attribute];
-        [characteristics addObject:characteristicOBJ];
+    for (MyCharacterstic *characteristic in _ServiceCharacteristics) {
+        [characteristics addObject: [characteristic GetObject]];
     }
     _bluetoothService.characteristics = characteristics;
     [_peripheralManager addService:_bluetoothService];
@@ -79,10 +72,12 @@
     
 }
 - (void)peripheralManager:(CBPeripheralManager *)peripheral didReceiveReadRequest:(CBATTRequest *)request {
-    
+    if ([_delegate respondsToSelector:@selector(PeripheralDidReceivedRead:)])
+        [_delegate PeripheralDidReceivedRead:request];
 }
 - (void)peripheralManager:(CBPeripheralManager *)peripheral didReceiveWriteRequests:(NSArray<CBATTRequest *> *)requests {
-    
+    if ([_delegate respondsToSelector:@selector(PeripheralDidReceivedWrite:)])
+        [_delegate PeripheralDidReceivedWrite:requests];
 }
 - (void)peripheralManagerIsReadyToUpdateSubscribers:(CBPeripheralManager *)peripheral {
     
@@ -93,8 +88,4 @@
 - (void)peripheralManager:(CBPeripheralManager *)peripheral central:(CBCentral *)central didUnsubscribeFromCharacteristic:(CBCharacteristic *)characteristic {
     
 }
-@end
-
-@implementation Characteristic
-
 @end

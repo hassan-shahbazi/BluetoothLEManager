@@ -31,4 +31,6 @@
 
 - (void)StartAdvertising;
 
+- (NSData *)PrepareValue:(NSString *)rawValue;
+
 @end

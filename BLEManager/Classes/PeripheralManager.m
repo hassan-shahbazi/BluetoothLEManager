@@ -41,6 +41,14 @@
     [_peripheralManager addService:_bluetoothService];
 }
 
+- (NSData *)PrepareValue:(NSString *)rawValue {
+    if (rawValue) {
+        return [[NSData alloc] initWithBase64EncodedString:[self ConvertStringToBase64:rawValue]
+                                                   options: NSDataBase64DecodingIgnoreUnknownCharacters];
+    }
+    return nil;
+}
+
 - (NSString *)ConvertStringToBase64:(NSString *)plain {
     NSData *plainData = [plain dataUsingEncoding:NSUTF8StringEncoding];
     NSString *base64String = [plainData base64EncodedStringWithOptions:kNilOptions];

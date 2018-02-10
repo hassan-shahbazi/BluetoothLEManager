@@ -7,6 +7,7 @@
 //
 
 #import "MyCharacterstic.h"
+#import "PeripheralManager.h"
 
 @interface MyCharacterstic()
 
@@ -15,17 +16,7 @@
 @implementation MyCharacterstic
 
 - (CBMutableCharacteristic *)GetObject {
-    NSData *Value = nil;
-    if (_Value != NULL) {
-        Value = [[NSData alloc] initWithBase64EncodedString:[self ConvertStringToBase64:_Value] options: NSDataBase64DecodingIgnoreUnknownCharacters];
-    }
-    return [[CBMutableCharacteristic alloc] initWithType:_UUID properties:_Property value:Value permissions:_Permission];
-}
-
-- (NSString *)ConvertStringToBase64:(NSString *)plain {
-    NSData *plainData = [plain dataUsingEncoding:NSUTF8StringEncoding];
-    NSString *base64String = [plainData base64EncodedStringWithOptions:kNilOptions];
-    return base64String;
+    return [[CBMutableCharacteristic alloc] initWithType:_UUID properties:_Property value: _Value permissions:_Permission];
 }
 
 @end

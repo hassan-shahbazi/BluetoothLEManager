@@ -15,8 +15,8 @@
 - (void)PeripheralStateChanged:(CBManagerState )state;
 - (void)PeripheralStartAdvertising;
 - (void)Error:(NSError *)error;
-- (void)PeripheralDidReceivedRead:(CBATTRequest *)request;
-- (void)PeripheralDidReceivedWrite:(NSArray<CBATTRequest *> *)requests;
+- (void)Peripheral:(CBPeripheralManager *)Peripheral DidReceivedRead:(CBATTRequest *)request;
+- (void)Peripheral:(CBPeripheralManager *)Peripheral DidReceivedWrite:(NSArray<CBATTRequest *> *)requests;
 
 @end
 

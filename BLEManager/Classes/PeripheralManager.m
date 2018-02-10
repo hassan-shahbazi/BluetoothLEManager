@@ -80,12 +80,12 @@
     
 }
 - (void)peripheralManager:(CBPeripheralManager *)peripheral didReceiveReadRequest:(CBATTRequest *)request {
-    if ([_delegate respondsToSelector:@selector(PeripheralDidReceivedRead:)])
-        [_delegate PeripheralDidReceivedRead:request];
+    if ([_delegate respondsToSelector:@selector(Peripheral:DidReceivedRead:)])
+        [_delegate Peripheral:peripheral DidReceivedRead:request];
 }
 - (void)peripheralManager:(CBPeripheralManager *)peripheral didReceiveWriteRequests:(NSArray<CBATTRequest *> *)requests {
-    if ([_delegate respondsToSelector:@selector(PeripheralDidReceivedWrite:)])
-        [_delegate PeripheralDidReceivedWrite:requests];
+    if ([_delegate respondsToSelector:@selector(Peripheral:DidReceivedWrite:)])
+        [_delegate Peripheral:peripheral DidReceivedWrite:requests];
 }
 - (void)peripheralManagerIsReadyToUpdateSubscribers:(CBPeripheralManager *)peripheral {
     

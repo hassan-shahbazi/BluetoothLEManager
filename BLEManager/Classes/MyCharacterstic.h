@@ -11,7 +11,7 @@
 
 @interface MyCharacterstic : NSObject
 
-@property (nonatomic, strong) NSString *UUID;
+@property (nonatomic, strong) CBUUID *UUID;
 @property (nonatomic, strong) NSString *Value;
 @property (nonatomic, assign) CBAttributePermissions Permission;
 @property (nonatomic, assign) CBCharacteristicProperties Property;

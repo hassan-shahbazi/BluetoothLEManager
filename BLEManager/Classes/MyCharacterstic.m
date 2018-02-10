@@ -15,12 +15,11 @@
 @implementation MyCharacterstic
 
 - (CBMutableCharacteristic *)GetObject {
-    CBUUID *UUID = [CBUUID UUIDWithString: _UUID];
     NSData *Value = nil;
     if (_Value != NULL) {
         Value = [[NSData alloc] initWithBase64EncodedString:[self ConvertStringToBase64:_Value] options: NSDataBase64DecodingIgnoreUnknownCharacters];
     }
-    return [[CBMutableCharacteristic alloc] initWithType:UUID properties:_Property value:Value permissions:_Permission];
+    return [[CBMutableCharacteristic alloc] initWithType:_UUID properties:_Property value:Value permissions:_Permission];
 }
 
 - (NSString *)ConvertStringToBase64:(NSString *)plain {

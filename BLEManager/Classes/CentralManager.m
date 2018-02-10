@@ -134,6 +134,8 @@
 }
 
 - (void)Read:(CBCharacteristic *)Characterstic {
+    if (Characterstic == NULL)
+        Characterstic = _localCharacteristic;
     if (_localPeriperal)
         [_localPeriperal readValueForCharacteristic:Characterstic];
     else
@@ -149,7 +151,6 @@
     else {
         if (data) {
             if (_Logging)
-                NSLog(@"bytes to write: %@", data);
             [_localPeriperal writeValue: data
                       forCharacteristic:_localCharacteristic
                                    type:CBCharacteristicWriteWithResponse];
@@ -251,7 +252,6 @@
     }
     else {
         for (CBService *service in peripheral.services) {
-            NSLog(@"Service: %@", service);
             if ([_ServiceUUIDs containsObject:service.UUID])
                 [peripheral discoverCharacteristics:nil forService:service];
         }
@@ -291,7 +291,6 @@
     }
     else {
         for (CBCharacteristic *characteristic in service.characteristics) {
-            NSLog(@"Characterstics: %@", characteristic);
             if ([characteristic.UUID.UUIDString isEqualToString:_ServiceCharacteristic.UUIDString])
                 _localCharacteristic = characteristic;
             if ([characteristic.UUID.UUIDString isEqualToString:_ServiceNotifyCharacteristic.UUIDString])

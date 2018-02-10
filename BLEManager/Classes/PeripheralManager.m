@@ -55,6 +55,10 @@
     return base64String;
 }
 
+- (void)PeripheralSendResponse:(CBATTRequest *)request WithResult:(CBATTError )result {
+    [_peripheralManager respondToRequest:request withResult:result];
+}
+
 #pragma mark - Peripheral Manager Delegate
 - (void)peripheralManagerDidUpdateState:(CBPeripheralManager *)peripheral {
     [_delegate PeripheralStateChanged:peripheral.state];
@@ -80,12 +84,12 @@
     
 }
 - (void)peripheralManager:(CBPeripheralManager *)peripheral didReceiveReadRequest:(CBATTRequest *)request {
-    if ([_delegate respondsToSelector:@selector(Peripheral:DidReceivedRead:)])
-        [_delegate Peripheral:peripheral DidReceivedRead:request];
+    if ([_delegate respondsToSelector:@selector(PeripheralDidReceivedRead:)])
+        [_delegate PeripheralDidReceivedRead:request];
 }
 - (void)peripheralManager:(CBPeripheralManager *)peripheral didReceiveWriteRequests:(NSArray<CBATTRequest *> *)requests {
-    if ([_delegate respondsToSelector:@selector(Peripheral:DidReceivedWrite:)])
-        [_delegate Peripheral:peripheral DidReceivedWrite:requests];
+    if ([_delegate respondsToSelector:@selector(PeripheralDidReceivedWrite:)])
+        [_delegate PeripheralDidReceivedWrite:requests];
 }
 - (void)peripheralManagerIsReadyToUpdateSubscribers:(CBPeripheralManager *)peripheral {
     

@@ -12,16 +12,16 @@
 @protocol BLECentralManagerDelegate <NSObject>
 @optional
 - (void)CentralStateChanged:(CBManagerState )state;
-- (void)DongleFound:(NSString *)macAddress;
-- (void)PairedDongles:(NSArray *)pairedList;
-- (void)DongleConnected;
-- (void)DongleDisconnected;
-- (void)DongleRecived:(NSData *)data;
-- (void)DonglePairingFailed;
+- (void)CentralDidFound:(NSString *)macAddress;
+- (void)PairedCentral:(NSArray *)pairedList;
+- (void)CentralDidConnected;
+- (void)CentralDidDisconnected;
+- (void)CentralDidRecived:(NSData *)data;
+- (void)CentralPairingFailed;
 - (void)Error:(NSError *)error;
 - (void)ShouldLockDevice;
-- (void)RSSIRead:(NSInteger )RSSI;
-- (void)DataTransfered;
+- (void)CentralDidReadRSSI:(NSInteger )RSSI;
+- (void)CentralDataDidTransfered;
 @end
 
 @interface CentralManager : NSObject <CBCentralManagerDelegate, CBPeripheralDelegate>
@@ -52,6 +52,8 @@
 - (void)ReadRSSI;
 
 - (void)TestPairing;
+
+- (void)Read:(CBCharacteristic *)Characterstic;
 
 - (void)Write:(NSData *)data;
 

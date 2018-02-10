@@ -17,7 +17,7 @@
 - (void)Error:(NSError *)error;
 - (void)PeripheralDidReceivedRead:(CBATTRequest *)request;
 - (void)PeripheralDidReceivedWrite:(NSArray<CBATTRequest *> *)requests;
-- (void)PeripheralSendResponse:(CBATTRequest *)request WithResult:(CBATTError )result;
+
 @end
 
 @interface PeripheralManager : NSObject <CBPeripheralManagerDelegate>
@@ -33,4 +33,5 @@
 
 - (NSData *)PrepareValue:(NSString *)rawValue;
 
+- (void)PeripheralSendResponse:(CBATTRequest *)request WithResult:(CBATTError )result;
 @end

@@ -46,9 +46,9 @@
 
 - (void)readRSSI;
 
-- (void)read:(CBCharacteristic *)Characterstic;
+- (void)read:(CBUUID *)Characterstic;
 
-- (void)write:(NSData *)data on:(CBCharacteristic *)Characterstic;
+- (void)write:(NSData *)data on:(CBUUID *)Characterstic;
 
 - (NSString *)connectedCentralAddress;
 

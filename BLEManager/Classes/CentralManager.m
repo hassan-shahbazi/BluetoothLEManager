@@ -17,6 +17,8 @@
 @property (nonatomic, strong) CBCentralManager *localCentral;
 @property (nonatomic, strong) CBPeripheral *localPeriperal;
 
+@property (nonatomic, strong) NSMutableArray *discoveredCharacterstics;
+
 @property (nonatomic, strong) NSString *connectedMacAddress;
 
 @end
@@ -96,17 +98,21 @@
     }];
 }
 
-- (void)read:(CBCharacteristic *)Characterstic {
+- (void)read:(CBUUID *)Characterstic {
     [self performTask: ^{
-        [_localPeriperal readValueForCharacteristic:Characterstic];
+        for (CBCharacteristic *characterstic in _discoveredCharacterstics)
+            if (characterstic.UUID == Characterstic)
+                [_localPeriperal readValueForCharacteristic: characterstic];
     }];
 }
 
-- (void)write:(NSData *)data on:(CBCharacteristic *)Characterstic {
+- (void)write:(NSData *)data on:(CBUUID *)Characterstic {
     [self performTask: ^{
-        [_localPeriperal writeValue: data
-                  forCharacteristic:Characterstic
-                               type:CBCharacteristicWriteWithResponse];
+        for (CBCharacteristic *characterstic in _discoveredCharacterstics)
+            if (characterstic.UUID == Characterstic)
+                [_localPeriperal writeValue: data
+                          forCharacteristic: characterstic
+                                       type: CBCharacteristicWriteWithResponse];
     }];
 }
 
@@ -186,6 +192,7 @@
 - (void)peripheral:(CBPeripheral *)peripheral didDiscoverCharacteristicsForService:(CBService *)service error:(NSError *)error {
     [self performTask: ^{
         for (CBCharacteristic *characteristic in service.characteristics) {
+            [_discoveredCharacterstics addObject:characteristic];
             if ([_service_notifyCharacteristic containsObject:characteristic.UUID])
                 [peripheral setNotifyValue:YES forCharacteristic:characteristic];
         }

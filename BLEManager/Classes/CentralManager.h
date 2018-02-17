@@ -11,7 +11,7 @@
 
 @protocol BLECentralManagerDelegate <NSObject>
 @optional
-- (void)BLECentralManagerStateDidUpdate:(CBManagerState )state;
+- (void)BLECentralManagerStateDidUpdate:(CBManagerState )state isRestored:(BOOL )restored;
 - (void)BLECentralManagerDidFind:(NSString *)macAddress;
 - (void)BLECentralManagerDidGetPaired:(NSArray *)list;
 - (void)BLECentralManagerDidConnect;

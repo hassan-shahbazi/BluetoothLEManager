@@ -8,12 +8,15 @@
 
 #import "CentralManager.h"
 
+#define VANCOSYS_KEY    [[NSBundle mainBundle] bundleIdentifier]
+
 @interface CentralManager()
 @property (nonatomic, strong) CBCentralManager *centralManager;
 @property (nonatomic, strong) CBCentralManager *localCentral;
 @property (nonatomic, strong) CBPeripheral *localPeriperal;
 @property (nonatomic, strong) NSMutableArray *discoveredCharacterstics;
 @property (nonatomic, strong) NSString *connectedMacAddress;
+@property (nonatomic, assign) BOOL isRestored;
 @end
 
 @implementation CentralManager
@@ -24,6 +27,7 @@
         _connectedMacAddress = @"";
         _RSSI_filter = -50;
         _discoveredCharacterstics = [NSMutableArray new];
+        _isRestored = NO;
         
         dispatch_queue_t centralQueu = dispatch_queue_create("com.Vancosys", NULL);
         _centralManager = [[CBCentralManager alloc]
@@ -88,10 +92,25 @@
     return _connectedMacAddress;
 }
 
+#pragma mark - Cache Connected Peripheral
+- (void)Save:(NSString *)peripheralMac {
+    _connectedMacAddress = peripheralMac;
+    [[NSUserDefaults standardUserDefaults] setValue:peripheralMac forKey:VANCOSYS_KEY];
+    [[NSUserDefaults standardUserDefaults] synchronize];
+}
+- (NSString *)GetPeripheralMac {
+    return [[NSUserDefaults standardUserDefaults] objectForKey:VANCOSYS_KEY];
+}
+- (void)RemoveSavedPeripheralMac {
+    _connectedMacAddress = @"";
+    [[NSUserDefaults standardUserDefaults] removeObjectForKey:VANCOSYS_KEY];
+}
+
 #pragma mark - Central Manager Delegate
 - (void)centralManagerDidUpdateState:(CBCentralManager *)central {
-    if ([_delegate respondsToSelector:@selector(BLECentralManagerStateDidUpdate:)])
-        [_delegate BLECentralManagerStateDidUpdate:central.state];
+    if ([_delegate respondsToSelector:@selector(BLECentralManagerStateDidUpdate:isRestored:)])
+        [_delegate BLECentralManagerStateDidUpdate:central.state isRestored:_isRestored];
+    _isRestored = NO;
 }
 - (void)centralManager:(CBCentralManager *)central didDiscoverPeripheral:(CBPeripheral *)peripheral advertisementData:(NSDictionary<NSString *,id> *)advertisementData RSSI:(NSNumber *)RSSI {
     _localCentral = central;
@@ -121,8 +140,16 @@
         [_delegate BLECentralManagerDidDisconnect];
 }
 - (void)centralManager:(CBCentralManager *)central willRestoreState:(NSDictionary<NSString *,id> *)dict {
-    if ([dict valueForKey:CBCentralManagerRestoredStatePeripheralsKey] != nil) {
-        
+    NSArray *restoredPeripherals = [dict valueForKey: CBCentralManagerRestoredStatePeripheralsKey];
+    if (restoredPeripherals) {
+        for (CBPeripheral *peripheral in restoredPeripherals) {
+            if (peripheral.identifier.UUIDString == [self GetPeripheralMac]) {
+                _localCentral = central;
+                _localPeriperal = peripheral;
+                _localPeriperal.delegate = self;
+                _isRestored = YES;
+            }
+        }
     }
 }
 - (void)centralManager:(CBCentralManager *)central didDiscoverPairedPeripherals:(NSArray *)peripherals {

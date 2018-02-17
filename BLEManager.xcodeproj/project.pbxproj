@@ -12,10 +12,6 @@
 		17217687200258DD006D7559 /* PeripheralManager.h in Headers */ = {isa = PBXBuildFile; fileRef = 17217685200258DD006D7559 /* PeripheralManager.h */; };
 		17217688200258DD006D7559 /* PeripheralManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 17217686200258DD006D7559 /* PeripheralManager.m */; };
 		1721768A200258E6006D7559 /* BLEManager.h in Headers */ = {isa = PBXBuildFile; fileRef = 17217689200258E6006D7559 /* BLEManager.h */; };
-		1721768F200258F0006D7559 /* ErrorCodes.plist in Resources */ = {isa = PBXBuildFile; fileRef = 1721768B200258F0006D7559 /* ErrorCodes.plist */; };
-		17217690200258F0006D7559 /* ErrorHandler.h in Headers */ = {isa = PBXBuildFile; fileRef = 1721768C200258F0006D7559 /* ErrorHandler.h */; };
-		17217691200258F0006D7559 /* ErrorCodes.h in Headers */ = {isa = PBXBuildFile; fileRef = 1721768D200258F0006D7559 /* ErrorCodes.h */; };
-		17217692200258F0006D7559 /* ErrorHandler.m in Sources */ = {isa = PBXBuildFile; fileRef = 1721768E200258F0006D7559 /* ErrorHandler.m */; };
 		17BA5FA51EFFE13A004A06B2 /* BLEManager.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 17D069321EF9208500E6211B /* BLEManager.framework */; };
 		17BA5FAC1EFFE4F1004A06B2 /* CentralManagerTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 17BA5FAB1EFFE4F1004A06B2 /* CentralManagerTests.m */; };
 		5C7BD0712029DC28007207B5 /* MyCharacterstic.h in Headers */ = {isa = PBXBuildFile; fileRef = 5C7BD06F2029DC28007207B5 /* MyCharacterstic.h */; };
@@ -38,10 +34,6 @@
 		17217685200258DD006D7559 /* PeripheralManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PeripheralManager.h; path = Classes/PeripheralManager.h; sourceTree = "<group>"; };
 		17217686200258DD006D7559 /* PeripheralManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = PeripheralManager.m; path = Classes/PeripheralManager.m; sourceTree = "<group>"; };
 		17217689200258E6006D7559 /* BLEManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BLEManager.h; path = Classes/BLEManager.h; sourceTree = "<group>"; };
-		1721768B200258F0006D7559 /* ErrorCodes.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = ErrorCodes.plist; path = Classes/ErrorCodes.plist; sourceTree = "<group>"; };
-		1721768C200258F0006D7559 /* ErrorHandler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ErrorHandler.h; path = Classes/ErrorHandler.h; sourceTree = "<group>"; };
-		1721768D200258F0006D7559 /* ErrorCodes.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ErrorCodes.h; path = Classes/ErrorCodes.h; sourceTree = "<group>"; };
-		1721768E200258F0006D7559 /* ErrorHandler.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ErrorHandler.m; path = Classes/ErrorHandler.m; sourceTree = "<group>"; };
 		17BA5FA01EFFE13A004A06B2 /* BLEManagerTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = BLEManagerTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		17BA5FA41EFFE13A004A06B2 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		17BA5FAB1EFFE4F1004A06B2 /* CentralManagerTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CentralManagerTests.m; sourceTree = "<group>"; };
@@ -70,17 +62,6 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
-		174CC02F1EFA45C9006A7C28 /* Error Handler */ = {
-			isa = PBXGroup;
-			children = (
-				1721768D200258F0006D7559 /* ErrorCodes.h */,
-				1721768B200258F0006D7559 /* ErrorCodes.plist */,
-				1721768C200258F0006D7559 /* ErrorHandler.h */,
-				1721768E200258F0006D7559 /* ErrorHandler.m */,
-			);
-			name = "Error Handler";
-			sourceTree = "<group>";
-		};
 		174CC0301EFA45D4006A7C28 /* Manager */ = {
 			isa = PBXGroup;
 			children = (
@@ -123,7 +104,6 @@
 				17217689200258E6006D7559 /* BLEManager.h */,
 				17D069361EF9208500E6211B /* Info.plist */,
 				174CC0301EFA45D4006A7C28 /* Manager */,
-				174CC02F1EFA45C9006A7C28 /* Error Handler */,
 			);
 			path = BLEManager;
 			sourceTree = "<group>";
@@ -164,9 +144,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				17217683200258D2006D7559 /* CentralManager.h in Headers */,
-				17217690200258F0006D7559 /* ErrorHandler.h in Headers */,
 				17217687200258DD006D7559 /* PeripheralManager.h in Headers */,
-				17217691200258F0006D7559 /* ErrorCodes.h in Headers */,
 				1721768A200258E6006D7559 /* BLEManager.h in Headers */,
 				5C7BD0712029DC28007207B5 /* MyCharacterstic.h in Headers */,
 			);
@@ -262,7 +240,6 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				1721768F200258F0006D7559 /* ErrorCodes.plist in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -282,7 +259,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				17217688200258DD006D7559 /* PeripheralManager.m in Sources */,
-				17217692200258F0006D7559 /* ErrorHandler.m in Sources */,
 				5C7BD0722029DC28007207B5 /* MyCharacterstic.m in Sources */,
 				17217684200258D2006D7559 /* CentralManager.m in Sources */,
 			);

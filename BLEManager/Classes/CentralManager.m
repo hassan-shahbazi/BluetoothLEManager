@@ -123,7 +123,7 @@
     }
 }
 - (void)centralManager:(CBCentralManager *)central didConnectPeripheral:(CBPeripheral *)peripheral {
-    _connectedMacAddress = peripheral.identifier.UUIDString;
+    [self Save: peripheral.identifier.UUIDString];
     [central stopScan];
     
     [_localPeriperal discoverServices: _service_UUID];
@@ -135,7 +135,7 @@
         [_delegate BLECentralManagerDidFail:error.localizedDescription];
 }
 - (void)centralManager:(CBCentralManager *)central didDisconnectPeripheral:(CBPeripheral *)peripheral error:(NSError *)error {
-    _connectedMacAddress = @"";
+    [self RemoveSavedPeripheralMac];
     if ([_delegate respondsToSelector:@selector(BLECentralManagerDidDisconnect)])
         [_delegate BLECentralManagerDidDisconnect];
 }

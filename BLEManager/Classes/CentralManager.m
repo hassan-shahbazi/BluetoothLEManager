@@ -102,7 +102,7 @@
 - (void)read:(CBUUID *)Characterstic {
     [self performTask: ^{
         for (CBCharacteristic *characterstic in _discoveredCharacterstics)
-            if (characterstic.UUID == Characterstic)
+            if ([characterstic.UUID.UUIDString isEqualToString: Characterstic.UUIDString])
                 [_localPeriperal readValueForCharacteristic: characterstic];
     }];
 }
@@ -110,7 +110,7 @@
 - (void)write:(NSData *)data on:(CBUUID *)Characterstic {
     [self performTask: ^{
         for (CBCharacteristic *characterstic in _discoveredCharacterstics)
-            if (characterstic.UUID == Characterstic)
+            if ([characterstic.UUID.UUIDString isEqualToString: Characterstic.UUIDString])
                 [_localPeriperal writeValue: data
                           forCharacteristic: characterstic
                                        type: CBCharacteristicWriteWithResponse];

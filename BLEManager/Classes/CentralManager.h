@@ -11,52 +11,43 @@
 
 @protocol BLECentralManagerDelegate <NSObject>
 @optional
-- (void)CentralStateChanged:(CBManagerState )state;
-- (void)CentralDidFound:(NSString *)macAddress;
-- (void)PairedCentral:(NSArray *)pairedList;
-- (void)CentralDidConnected;
-- (void)CentralDidDisconnected;
-- (void)CentralDidRecived:(NSData *)data;
-- (void)CentralPairingFailed;
-- (void)Error:(NSError *)error;
-- (void)ShouldLockDevice;
-- (void)CentralDidReadRSSI:(NSInteger )RSSI;
-- (void)CentralDataDidTransfered;
+- (void)BLECentralManagerStateDidUpdate:(CBManagerState )state;
+- (void)BLECentralManagerDidFind:(NSString *)macAddress;
+- (void)BLECentralManagerDidGetPaired:(NSArray *)list;
+- (void)BLECentralManagerDidConnect;
+- (void)BLECentralManagerDidDisconnect;
+- (void)BLECentralManagerDidRecive:(NSData *)data;
+- (void)BLECentralManagerDidFailToPair;
+- (void)BLECentralManagerDidFail:(NSString *)error;
+- (void)BLECentralManagerShouldLockDevice;
+- (void)BLECentralManagerDidReadRSSI:(NSInteger )RSSI;
+- (void)BLECentralManagerDidTransferData;
 @end
 
 @interface CentralManager : NSObject <CBCentralManagerDelegate, CBPeripheralDelegate>
 
-@property (nonatomic, strong) NSArray *ServiceUUIDs;
-@property (nonatomic, strong) CBUUID *ServiceCharacteristic;
-@property (nonatomic, strong) CBUUID *ServiceNotifyCharacteristic;
-@property (nonatomic, assign) BOOL RSSI_lock;
-@property (nonatomic, assign) NSInteger RSSI_lockValue;
-@property (nonatomic, assign) NSInteger RSSI_delay;
+@property (nonatomic, strong) NSArray *service_UUID;
+@property (nonatomic, strong) NSArray *service_characteristic;
+@property (nonatomic, strong) NSArray *service_notifyCharacteristic;
 @property (nonatomic, assign) NSInteger RSSI_filter;
-@property (nonatomic, strong) NSMutableArray *AutoConnectDongles;
-@property (nonatomic, assign) BOOL Logging;
 @property (nonatomic, weak) id<BLECentralManagerDelegate> delegate;
 
-+ (CentralManager *)SharedInstance;
+- (void)connect;
 
-- (void)Connect;
+- (void)getPairedList;
 
-- (void)GetPairedList;
+- (void)disconnect;
 
-- (void)Disconnect;
+- (void)scan;
 
-- (void)StartScanning;
+- (void)stopScan;
 
-- (void)StopScanning;
+- (void)readRSSI;
 
-- (void)ReadRSSI;
+- (void)read:(CBCharacteristic *)Characterstic;
 
-- (void)TestPairing;
+- (void)write:(NSData *)data on:(CBCharacteristic *)Characterstic;
 
-- (void)Read:(CBCharacteristic *)Characterstic;
-
-- (void)Write:(NSData *)data;
-
-- (NSString *)GetConnectedMacAddress;
+- (NSString *)connectedCentralAddress;
 
 @end

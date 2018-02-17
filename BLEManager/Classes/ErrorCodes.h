@@ -23,6 +23,6 @@
 #define DiscoveredPeripheral_Null   -883002
 #define Peripheral_Connected        -883003
 #define PeripheralService_Null      -883004
-#define Peripherals_DontMatch        -883005
+#define Peripherals_DontMatch       -883005
 
 #endif /* ErrorCodes_h */

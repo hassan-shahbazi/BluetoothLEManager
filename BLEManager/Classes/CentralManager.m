@@ -17,152 +17,95 @@
 @property (nonatomic, strong) CBCentralManager *localCentral;
 @property (nonatomic, strong) CBPeripheral *localPeriperal;
 
-@property (nonatomic, strong) CBCharacteristic *localCharacteristic;
-
 @property (nonatomic, strong) NSString *connectedMacAddress;
-@property (nonatomic, assign) NSInteger lockCount;
 
 @end
 
 @implementation CentralManager
 
 - (id)init {
-    self = [super init];
-    if (self) {
-        _centralManager = nil;
-        _connectedMacAddress = @"";
-        _lockCount = 0;
-        _RSSI_lock = -100;
-        _RSSI_delay = 3;
-        _RSSI_filter = -50;
-        _AutoConnectDongles = [NSMutableArray new];
-        
-        
-        dispatch_queue_t centralQueu = dispatch_queue_create("com.Vancosys", NULL);
-        self.centralManager = [[CBCentralManager alloc]
-                               initWithDelegate:self
-                               queue:centralQueu
-                               options: @{CBCentralManagerOptionRestoreIdentifierKey:@"VancosysCentral",
-                                          CBCentralManagerOptionShowPowerAlertKey: @YES}];
-    }
-    return self;
-}
-
-+ (CentralManager *)SharedInstance {
     static CentralManager *singleton = nil;
     if (!singleton) {
-        singleton = [[CentralManager alloc] init];
+        self = [super init];
+        if (self) {
+            _connectedMacAddress = @"";
+            _RSSI_filter = -50;
+            
+            dispatch_queue_t centralQueu = dispatch_queue_create("com.Vancosys", NULL);
+            _centralManager = [[CBCentralManager alloc]
+                                   initWithDelegate:self
+                                   queue:centralQueu
+                                   options: @{CBCentralManagerOptionRestoreIdentifierKey:@"VancosysCentral",
+                                              CBCentralManagerOptionShowPowerAlertKey: @YES}];
+        }
     }
     return singleton;
 }
-
-- (void)Connect {
-    if (_localCentral) {
-        if (_localPeriperal) {
-            [_localCentral connectPeripheral:_localPeriperal options:nil];
-        }
-        else {
-            if ([_delegate respondsToSelector:@selector(Error:)])
-                [_delegate Error:[self GetErrorObjectForCode:LocalPeripheral_Null]];
-        }
+- (void)performTask:(void (^)(void))function {
+    @try {
+        function();
     }
-    else {
-        if ([_delegate respondsToSelector:@selector(Error:)])
-            [_delegate Error:[self GetErrorObjectForCode:LocalCentral_Null]];
+    @catch (NSException *exception) {
+        if ([_delegate respondsToSelector:@selector(BLECentralManagerDidFail:)])
+            [_delegate BLECentralManagerDidFail:exception.reason];
     }
 }
 
-- (void)GetPairedList {    
-    if (_centralManager) {
-        [self centralManager:_centralManager didDiscoverPairedPeripherals:[_centralManager retrieveConnectedPeripheralsWithServices:_ServiceUUIDs]];
-    }
-    else if ([_delegate respondsToSelector:@selector(Error:)])
-            [_delegate Error:[self GetErrorObjectForCode:CentralManager_Null]];
-}
-
-- (void)Disconnect {
-    if (_localCentral) {
-        if (_localPeriperal) {
-            [_localCentral cancelPeripheralConnection:_localPeriperal];
-        }
-        else {
-            if ([_delegate respondsToSelector:@selector(Error:)])
-                [_delegate Error:[self GetErrorObjectForCode:LocalPeripheral_Null]];
-        }
-    }
-    else {
-        if ([_delegate respondsToSelector:@selector(Error:)])
-            [_delegate Error:[self GetErrorObjectForCode:LocalCentral_Null]];
-    }
-}
-
-- (void)StartScanning {
-    [self Disconnect];
-    [self StopScanning];
-    if (_centralManager)
-        [_centralManager scanForPeripheralsWithServices:_ServiceUUIDs options:nil];
-    else
-        if ([_delegate respondsToSelector:@selector(Error:)])
-            [_delegate Error:[self GetErrorObjectForCode:CentralManager_Null]];
-}
-
-- (void)StopScanning {
-    if (_centralManager) {
-        if ([_centralManager isScanning]) {
-            [_centralManager stopScan];
-        }
-        else if ([_delegate respondsToSelector:@selector(Error:)])
-            [_delegate Error:[self GetErrorObjectForCode:CentralManager_NotScanning]];
-    }
-    else {
-        if ([_delegate respondsToSelector:@selector(Error:)])
-            [_delegate Error:[self GetErrorObjectForCode:CentralManager_Null]];
-    }
-}
-
-- (void)ReadRSSI {
-    if (_localPeriperal)
-        [_localPeriperal readRSSI];
-    else
-        if ([_delegate respondsToSelector:@selector(Error:)])
-            [_delegate Error:[self GetErrorObjectForCode:LocalPeripheral_Null]];
-}
-
-- (void)TestPairing {
-    [self Read:_localCharacteristic];
+- (void)connect {
+    [self performTask: ^{
+        [_localCentral connectPeripheral:_localPeriperal options:nil];
+    }];
     
 }
 
-- (void)Read:(CBCharacteristic *)Characterstic {
-    if (Characterstic == NULL)
-        Characterstic = _localCharacteristic;
-    if (_localPeriperal)
+- (void)getPairedList {
+    [self performTask: ^{
+        [self centralManager:_centralManager didDiscoverPairedPeripherals:
+         [_centralManager retrieveConnectedPeripheralsWithServices:_service_UUID]];
+    }];
+}
+
+- (void)disconnect {
+    [self performTask: ^{
+        [_localCentral cancelPeripheralConnection:_localPeriperal];
+    }];
+}
+
+- (void)scan {
+    [self disconnect];
+    [self stopScan];
+    [self performTask: ^{
+        [_centralManager scanForPeripheralsWithServices:_service_UUID options:nil];
+    }];
+}
+
+- (void)stopScan {
+    [self performTask: ^{
+        [_centralManager stopScan];
+    }];
+}
+
+- (void)readRSSI {
+    [self performTask: ^{
+        [_localPeriperal readRSSI];
+    }];
+}
+
+- (void)read:(CBCharacteristic *)Characterstic {
+    [self performTask: ^{
         [_localPeriperal readValueForCharacteristic:Characterstic];
-    else
-        if ([_delegate respondsToSelector:@selector(Error:)])
-            [_delegate Error:[self GetErrorObjectForCode:LocalPeripheral_Null]];
+    }];
 }
 
-- (void)Write:(NSData *)data {
-    if (!_localCharacteristic) {
-        if ([_delegate respondsToSelector:@selector(Error:)])
-            [_delegate Error:[self GetErrorObjectForCode:LocalCharacterisitic_Null]];
-    }
-    else {
-        if (data) {
-            if (_Logging)
-            [_localPeriperal writeValue: data
-                      forCharacteristic:_localCharacteristic
-                                   type:CBCharacteristicWriteWithResponse];
-        }
-        else {
-            if ([_delegate respondsToSelector:@selector(Error:)])
-                [_delegate Error:[self GetErrorObjectForCode:ArrayToData_Failed]];
-        }
-    }
+- (void)write:(NSData *)data on:(CBCharacteristic *)Characterstic {
+    [self performTask: ^{
+        [_localPeriperal writeValue: data
+                  forCharacteristic:Characterstic
+                               type:CBCharacteristicWriteWithResponse];
+    }];
 }
 
-- (NSString *)GetConnectedMacAddress {
+- (NSString *)connectedCentralAddress {
     return _connectedMacAddress;
 }
              
@@ -172,54 +115,38 @@
 
 #pragma mark - Central Manager Delegate
 - (void)centralManagerDidUpdateState:(CBCentralManager *)central {
-    if ([_delegate respondsToSelector:@selector(CentralStateChanged:)])
-        [_delegate CentralStateChanged:central.state];
+    if ([_delegate respondsToSelector:@selector(BLECentralManagerStateDidUpdate:)])
+        [_delegate BLECentralManagerStateDidUpdate:central.state];
 }
 - (void)centralManager:(CBCentralManager *)central didDiscoverPeripheral:(CBPeripheral *)peripheral advertisementData:(NSDictionary<NSString *,id> *)advertisementData RSSI:(NSNumber *)RSSI {
-    if (!peripheral.name || [peripheral.name isEqualToString:@""]) {
-        if ([_delegate respondsToSelector:@selector(Error:)])
-            [_delegate Error:[self GetErrorObjectForCode:DiscoveredPeripheral_Null]];
-    }
-    else if (!_connectedPeripheral || _connectedPeripheral.state == CBPeripheralStateDisconnected) {
+
+    [self performTask: ^{
         _localCentral = central;
         _localPeriperal = peripheral;
         _localPeriperal.delegate = self;
-
-        if ([_AutoConnectDongles containsObject:peripheral.identifier.UUIDString]) {
-            [central connectPeripheral:peripheral options:nil];
-            [self StopScanning];
+        
+        if (RSSI.integerValue > _RSSI_filter && RSSI.integerValue < 0) {
+            if ([_delegate respondsToSelector:@selector(BLECentralManagerDidFind:)])
+                [_delegate BLECentralManagerDidFind:peripheral.identifier.UUIDString];
         }
-        else if (RSSI.integerValue > _RSSI_filter && RSSI.integerValue < 0) {
-            if ([_delegate respondsToSelector:@selector(CentralDidFound:)])
-                [_delegate CentralDidFound:peripheral.identifier.UUIDString];
-        }
-        else {
-            [self StartScanning];
-        }
-    }
-    else
-        if ([_delegate respondsToSelector:@selector(Error:)])
-            [_delegate Error:[self GetErrorObjectForCode:Peripheral_Connected]];
+    }];
 }
 - (void)centralManager:(CBCentralManager *)central didConnectPeripheral:(CBPeripheral *)peripheral {
     _connectedMacAddress = peripheral.identifier.UUIDString;
     [central stopScan];
     
-    [_localPeriperal discoverServices:nil];
-    if ([_delegate respondsToSelector:@selector(CentralDidConnected)])
-        [_delegate CentralDidConnected];
+    [_localPeriperal discoverServices: _service_UUID];
+    if ([_delegate respondsToSelector:@selector(BLECentralManagerDidConnect)])
+        [_delegate BLECentralManagerDidConnect];
 }
 - (void)centralManager:(CBCentralManager *)central didFailToConnectPeripheral:(CBPeripheral *)peripheral error:(NSError *)error {
-    if ([_delegate respondsToSelector:@selector(Error:)])
-        [_delegate Error:error];
+    if ([_delegate respondsToSelector:@selector(BLECentralManagerDidFail:)])
+        [_delegate BLECentralManagerDidFail:error.localizedDescription];
 }
 - (void)centralManager:(CBCentralManager *)central didDisconnectPeripheral:(CBPeripheral *)peripheral error:(NSError *)error {
     _connectedMacAddress = @"";
-    if ([_delegate respondsToSelector:@selector(CentralDidDisconnected)])
-        [_delegate CentralDidDisconnected];
-    if ([_AutoConnectDongles count])
-        [self StartScanning];
-
+    if ([_delegate respondsToSelector:@selector(BLECentralManagerDidDisconnect)])
+        [_delegate BLECentralManagerDidDisconnect];
 }
 - (void)centralManager:(CBCentralManager *)central willRestoreState:(NSDictionary<NSString *,id> *)dict {
     if ([dict valueForKey:CBCentralManagerRestoredStatePeripheralsKey] != nil) {
@@ -231,8 +158,8 @@
     _localPeriperal = [peripherals firstObject];
     _localPeriperal.delegate = self;
     
-    if ([_delegate respondsToSelector:@selector(PairedCentral:)])
-        [_delegate PairedCentral:peripherals];
+    if ([_delegate respondsToSelector:@selector(BLECentralManagerDidGetPaired:)])
+        [_delegate BLECentralManagerDidGetPaired:peripherals];
 }
 
 #pragma mark - Peripheral Delegate
@@ -240,63 +167,28 @@
     
 }
 - (void)peripheral:(CBPeripheral *)peripheral didDiscoverServices:(NSError *)error {
-    if (error) {
-        if ([_delegate respondsToSelector:@selector(Error:)])
-            [_delegate Error:error];
-    }
-    else if (peripheral != _localPeriperal
-             || !peripheral.services
-             || !peripheral.services.count) {
-        if ([_delegate respondsToSelector:@selector(Error:)])
-            [_delegate Error:[self GetErrorObjectForCode:PeripheralService_Null]];
-    }
-    else {
+    [self performTask: ^{
         for (CBService *service in peripheral.services) {
-            if ([_ServiceUUIDs containsObject:service.UUID])
-                [peripheral discoverCharacteristics:nil forService:service];
+            if ([_service_UUID containsObject: service.UUID])
+                [peripheral discoverCharacteristics:_service_characteristic forService:service];
         }
-    }
+    }];
 }
 - (void)peripheral:(CBPeripheral *)peripheral didReadRSSI:(NSNumber *)RSSI error:(NSError *)error {
-    if (error) {
-        if ([_delegate respondsToSelector:@selector(Error:)])
-            [_delegate Error:error];
-    }
-    else {
-        if ([_delegate respondsToSelector:@selector(CentralDidReadRSSI:)])
-            [_delegate CentralDidReadRSSI:RSSI.integerValue];
-        if (_RSSI_lock && (RSSI.integerValue < _RSSI_lockValue)) {
-            _lockCount++;
-            if (_lockCount >= _RSSI_delay) {
-                _lockCount = 0;
-                if ([_delegate respondsToSelector:@selector(ShouldLockDevice)])
-                    [_delegate ShouldLockDevice];
-            }
-        }
-        else {
-            _lockCount = 0;
-        }
-    }
+    [self performTask: ^{
+        if ([_delegate respondsToSelector:@selector(BLECentralManagerDidReadRSSI:)])
+            [_delegate BLECentralManagerDidReadRSSI: RSSI.integerValue];
+    }];
 }
 - (void)peripheral:(CBPeripheral *)peripheral didWriteValueForDescriptor:(CBDescriptor *)descriptor error:(NSError *)error {
 }
 - (void)peripheral:(CBPeripheral *)peripheral didDiscoverCharacteristicsForService:(CBService *)service error:(NSError *)error {
-    if (error) {
-        if ([_delegate respondsToSelector:@selector(Error:)])
-            [_delegate Error:error];
-    }
-    else if (peripheral != _localPeriperal) {
-        if ([_delegate respondsToSelector:@selector(Error:)])
-            [_delegate Error:[self GetErrorObjectForCode:Peripherals_DontMatch]];
-    }
-    else {
+    [self performTask: ^{
         for (CBCharacteristic *characteristic in service.characteristics) {
-            if ([characteristic.UUID.UUIDString isEqualToString:_ServiceCharacteristic.UUIDString])
-                _localCharacteristic = characteristic;
-            if ([characteristic.UUID.UUIDString isEqualToString:_ServiceNotifyCharacteristic.UUIDString])
+            if ([_service_notifyCharacteristic containsObject:characteristic.UUID])
                 [peripheral setNotifyValue:YES forCharacteristic:characteristic];
         }
-    }
+    }];
 }
 - (void)peripheral:(CBPeripheral *)peripheral didModifyServices:(NSArray<CBService *> *)invalidatedServices {
     
@@ -305,27 +197,12 @@
     
 }
 - (void)peripheral:(CBPeripheral *)peripheral didWriteValueForCharacteristic:(CBCharacteristic *)characteristic error:(NSError *)error {
-    if (error) {
-        if ([_delegate respondsToSelector:@selector(Error:)])
-            [_delegate Error:error];
-    }
-    else
-        if ([_delegate respondsToSelector:@selector(CentralDataDidTransfered)])
-            [_delegate CentralDataDidTransfered];
+    if ([_delegate respondsToSelector:@selector(BLECentralManagerDidTransferData)])
+        [_delegate BLECentralManagerDidTransferData];
 }
 - (void)peripheral:(CBPeripheral *)peripheral didUpdateValueForCharacteristic:(CBCharacteristic *)characteristic error:(NSError *)error {
-    if (error)
-        if (error == [ErrorHandler PairingError]) {
-            if ([_delegate respondsToSelector:@selector(CentralPairingFailed)])
-                [_delegate CentralPairingFailed];
-        }
-        else {
-            if ([_delegate respondsToSelector:@selector(Error:)])
-                [_delegate Error:error];
-        }
-    else
-        if ([_delegate respondsToSelector:@selector(CentralDidRecived:)])
-            [_delegate CentralDidRecived:characteristic.value];
+    if ([_delegate respondsToSelector:@selector(BLECentralManagerDidRecive:)])
+        [_delegate BLECentralManagerDidRecive: characteristic.value];
 }
 - (void)peripheral:(CBPeripheral *)peripheral didDiscoverIncludedServicesForService:(CBService *)service error:(NSError *)error {
     

@@ -33,7 +33,7 @@
         _centralManager = [[CBCentralManager alloc]
                            initWithDelegate:self
                            queue:centralQueu
-                           options: @{CBCentralManagerOptionRestoreIdentifierKey:@"VancosysCentral",
+                           options: @{CBCentralManagerOptionRestoreIdentifierKey:VANCOSYS_KEY,
                                       CBCentralManagerOptionShowPowerAlertKey: @YES}];
     }
     return self;
@@ -141,16 +141,14 @@
 }
 - (void)centralManager:(CBCentralManager *)central willRestoreState:(NSDictionary<NSString *,id> *)dict {
     NSArray *restoredPeripherals = [dict valueForKey: CBCentralManagerRestoredStatePeripheralsKey];
-    if (restoredPeripherals) {
-        for (CBPeripheral *peripheral in restoredPeripherals) {
+    if (restoredPeripherals)
+        for (CBPeripheral *peripheral in restoredPeripherals)
             if (peripheral.identifier.UUIDString == [self GetPeripheralMac]) {
                 _localCentral = central;
                 _localPeriperal = peripheral;
                 _localPeriperal.delegate = self;
                 _isRestored = YES;
             }
-        }
-    }
 }
 - (void)centralManager:(CBCentralManager *)central didDiscoverPairedPeripherals:(NSArray *)peripherals {
     _localCentral = central;

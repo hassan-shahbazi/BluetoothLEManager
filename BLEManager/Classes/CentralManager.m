@@ -30,6 +30,7 @@
     if (self) {
         _connectedMacAddress = @"";
         _RSSI_filter = -50;
+        _discoveredCharacterstics = [NSMutableArray new];
         
         dispatch_queue_t centralQueu = dispatch_queue_create("com.Vancosys", NULL);
         _centralManager = [[CBCentralManager alloc]
@@ -209,8 +210,8 @@
         [_delegate BLECentralManagerDidTransferData];
 }
 - (void)peripheral:(CBPeripheral *)peripheral didUpdateValueForCharacteristic:(CBCharacteristic *)characteristic error:(NSError *)error {
-    if ([_delegate respondsToSelector:@selector(BLECentralManagerDidRecive:)])
-        [_delegate BLECentralManagerDidRecive: characteristic.value];
+    if ([_delegate respondsToSelector:@selector(BLECentralManagerDidRecieve:)])
+        [_delegate BLECentralManagerDidRecieve: characteristic.value];
 }
 - (void)peripheral:(CBPeripheral *)peripheral didDiscoverIncludedServicesForService:(CBService *)service error:(NSError *)error {
     

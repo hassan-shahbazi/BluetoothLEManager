@@ -16,7 +16,7 @@
 - (void)BLECentralManagerDidGetPaired:(NSArray *)list;
 - (void)BLECentralManagerDidConnect;
 - (void)BLECentralManagerDidDisconnect;
-- (void)BLECentralManagerDidRecive:(NSData *)data;
+- (void)BLECentralManagerDidRecieve:(NSData *)data;
 - (void)BLECentralManagerDidFailToPair;
 - (void)BLECentralManagerDidFail:(NSString *)error;
 - (void)BLECentralManagerShouldLockDevice;

@@ -32,6 +32,8 @@
 @property (nonatomic, assign) NSInteger RSSI_filter;
 @property (nonatomic, weak) id<BLECentralManagerDelegate> delegate;
 
++ (CentralManager *)instance;
+
 - (void)connect;
 
 - (void)getPairedList;

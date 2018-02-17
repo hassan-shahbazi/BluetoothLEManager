@@ -24,20 +24,25 @@
 @implementation CentralManager
 
 - (id)init {
+    self = [super init];
+    if (self) {
+        _connectedMacAddress = @"";
+        _RSSI_filter = -50;
+        
+        dispatch_queue_t centralQueu = dispatch_queue_create("com.Vancosys", NULL);
+        _centralManager = [[CBCentralManager alloc]
+                           initWithDelegate:self
+                           queue:centralQueu
+                           options: @{CBCentralManagerOptionRestoreIdentifierKey:@"VancosysCentral",
+                                      CBCentralManagerOptionShowPowerAlertKey: @YES}];
+    }
+    return self;
+    
+}
++ (CentralManager *)instance {
     static CentralManager *singleton = nil;
     if (!singleton) {
-        self = [super init];
-        if (self) {
-            _connectedMacAddress = @"";
-            _RSSI_filter = -50;
-            
-            dispatch_queue_t centralQueu = dispatch_queue_create("com.Vancosys", NULL);
-            _centralManager = [[CBCentralManager alloc]
-                                   initWithDelegate:self
-                                   queue:centralQueu
-                                   options: @{CBCentralManagerOptionRestoreIdentifierKey:@"VancosysCentral",
-                                              CBCentralManagerOptionShowPowerAlertKey: @YES}];
-        }
+        singleton = [CentralManager new];
     }
     return singleton;
 }
@@ -107,10 +112,6 @@
 
 - (NSString *)connectedCentralAddress {
     return _connectedMacAddress;
-}
-             
-- (NSError *)GetErrorObjectForCode:(NSInteger )errorCode {
-    return [ErrorHandler GenerateErrorWithCode:errorCode];
 }
 
 #pragma mark - Central Manager Delegate

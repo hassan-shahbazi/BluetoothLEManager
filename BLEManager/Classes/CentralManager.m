@@ -143,7 +143,7 @@
     NSArray *restoredPeripherals = [dict valueForKey: CBCentralManagerRestoredStatePeripheralsKey];
     if (restoredPeripherals)
         for (CBPeripheral *peripheral in restoredPeripherals)
-            if (peripheral.identifier.UUIDString == [self GetPeripheralMac]) {
+            if ([peripheral.identifier.UUIDString isEqualToString:[self GetPeripheralMac]]) {
                 _localCentral = central;
                 _localPeriperal = peripheral;
                 _localPeriperal.delegate = self;

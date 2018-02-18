@@ -110,6 +110,8 @@
 - (void)centralManagerDidUpdateState:(CBCentralManager *)central {
     NSMutableDictionary *userInfo = [[NSMutableDictionary alloc] init];
     [userInfo setObject:[NSNumber numberWithBool:_isRestored] forKey:@"Restored"];
+    [userInfo setObject:[NSNumber numberWithInt:central.state] forKey:@"State"];
+    
     [[NSNotificationCenter defaultCenter] postNotificationName:@"CentralManagerUpdated" object:nil userInfo: userInfo];
 //    if ([_delegate respondsToSelector:@selector(BLECentralManagerStateDidUpdate:isRestored:)])
 //        [_delegate BLECentralManagerStateDidUpdate:central.state isRestored:_isRestored];

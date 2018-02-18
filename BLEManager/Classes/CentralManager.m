@@ -46,10 +46,11 @@
 }
 
 - (void)connect {
-    [self connect:_localPeriperal];
+    [_localCentral connectPeripheral:_localPeriperal options:nil];
 }
 - (void)connect:(CBPeripheral *)peripheral {
-    [_localCentral connectPeripheral:peripheral options:nil];
+    _localPeriperal = peripheral;
+    [self connect];
 }
 
 - (void)getPairedList {

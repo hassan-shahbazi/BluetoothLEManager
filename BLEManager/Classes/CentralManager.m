@@ -108,9 +108,12 @@
 
 #pragma mark - Central Manager Delegate
 - (void)centralManagerDidUpdateState:(CBCentralManager *)central {
-    if ([_delegate respondsToSelector:@selector(BLECentralManagerStateDidUpdate:isRestored:)])
-        [_delegate BLECentralManagerStateDidUpdate:central.state isRestored:_isRestored];
-    _isRestored = NO;
+    NSMutableDictionary *userInfo = [[NSMutableDictionary alloc] init];
+    [userInfo setObject:[NSNumber numberWithBool:_isRestored] forKey:@"Restored"];
+    [[NSNotificationCenter defaultCenter] postNotificationName:@"CentralManagerUpdated" object:nil userInfo: userInfo];
+//    if ([_delegate respondsToSelector:@selector(BLECentralManagerStateDidUpdate:isRestored:)])
+//        [_delegate BLECentralManagerStateDidUpdate:central.state isRestored:_isRestored];
+//    _isRestored = NO;
 }
 - (void)centralManager:(CBCentralManager *)central didDiscoverPeripheral:(CBPeripheral *)peripheral advertisementData:(NSDictionary<NSString *,id> *)advertisementData RSSI:(NSNumber *)RSSI {
     _localCentral = central;

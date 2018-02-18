@@ -9,20 +9,16 @@
 #import <CoreBluetooth/CoreBluetooth.h>
 #import <Foundation/Foundation.h>
 
-@protocol BLECentralManagerDelegate <NSObject>
-@optional
-- (void)BLECentralManagerStateDidUpdate:(CBManagerState )state isRestored:(BOOL )restored;
-- (void)BLECentralManagerDidFind:(NSString *)macAddress;
-- (void)BLECentralManagerDidGetPaired:(NSArray *)list;
-- (void)BLECentralManagerDidConnect;
-- (void)BLECentralManagerDidDisconnect;
-- (void)BLECentralManagerDidRecieve:(NSData *)data;
-- (void)BLECentralManagerDidFailToPair;
-- (void)BLECentralManagerDidFail:(NSString *)error;
-- (void)BLECentralManagerShouldLockDevice;
-- (void)BLECentralManagerDidReadRSSI:(NSInteger )RSSI;
-- (void)BLECentralManagerDidTransferData;
-@end
+#define BLE_Notification_StateUpdate    @"bleCentralManagerStateDidUpdate"
+#define BLE_Notification_didFound       @"bleCentralManagerDidFound"
+#define BLE_Notification_didConnect     @"bleCentralManagerDidConnect"
+#define BLE_Notification_didDisconnect  @"bleCentralManagerDidDisconnect"
+#define BLE_Notification_didFailed      @"bleCentralManagerDidFail"
+#define BLE_Notification_PairedList     @"bleCentralManagerDidGetPaired"
+#define BLE_Notification_didReadRSSI    @"bleCentralManagerDidReadRSSI"
+#define BLE_Notification_didWriteData   @"bleCentralManagerDidWrireData"
+#define BLE_Notification_didReadData    @"bleCentralManagerDidReadData"
+#define BLE_Notification_didRestored    @"bleCentralManagerDidRestored"
 
 @interface CentralManager : NSObject <CBCentralManagerDelegate, CBPeripheralDelegate>
 
@@ -30,11 +26,11 @@
 @property (nonatomic, strong) NSArray *service_characteristic;
 @property (nonatomic, strong) NSArray *service_notifyCharacteristic;
 @property (nonatomic, assign) NSInteger RSSI_filter;
-@property (nonatomic, weak) id<BLECentralManagerDelegate> delegate;
 
 + (CentralManager *)instance;
 
 - (void)connect;
+- (void)connect:(CBPeripheral *)peripheral;
 
 - (void)getPairedList;
 

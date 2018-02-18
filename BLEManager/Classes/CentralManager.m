@@ -112,10 +112,8 @@
     [userInfo setObject:[NSNumber numberWithBool:_isRestored] forKey:@"Restored"];
     [userInfo setObject:[NSNumber numberWithInt:central.state] forKey:@"State"];
     
-    [[NSNotificationCenter defaultCenter] postNotificationName:@"CentralManagerUpdated" object:nil userInfo: userInfo];
-//    if ([_delegate respondsToSelector:@selector(BLECentralManagerStateDidUpdate:isRestored:)])
-//        [_delegate BLECentralManagerStateDidUpdate:central.state isRestored:_isRestored];
-//    _isRestored = NO;
+    [[NSNotificationCenter defaultCenter] postNotificationName:@"bleCentralManagerStateDidUpdate" object:nil userInfo: userInfo];
+    _isRestored = NO;
 }
 - (void)centralManager:(CBCentralManager *)central didDiscoverPeripheral:(CBPeripheral *)peripheral advertisementData:(NSDictionary<NSString *,id> *)advertisementData RSSI:(NSNumber *)RSSI {
     _localCentral = central;
@@ -123,8 +121,10 @@
     _localPeriperal.delegate = self;
     
     if (RSSI.integerValue > _RSSI_filter && RSSI.integerValue < 0) {
-        if ([_delegate respondsToSelector:@selector(BLECentralManagerDidFind:)])
-            [_delegate BLECentralManagerDidFind:peripheral.identifier.UUIDString];
+        NSMutableDictionary *userInfo = [[NSMutableDictionary alloc] init];
+        [userInfo setObject:peripheral.identifier.UUIDString forKey:@"MacAddress"];
+        
+        [[NSNotificationCenter defaultCenter] postNotificationName:@"bleCentralManagerDidFind" object:nil userInfo: userInfo];
     }
 }
 - (void)centralManager:(CBCentralManager *)central didConnectPeripheral:(CBPeripheral *)peripheral {
@@ -132,17 +132,17 @@
     [central stopScan];
     
     [_localPeriperal discoverServices: _service_UUID];
-    if ([_delegate respondsToSelector:@selector(BLECentralManagerDidConnect)])
-        [_delegate BLECentralManagerDidConnect];
+    [[NSNotificationCenter defaultCenter] postNotificationName:@"bleCentralManagerDidConnect" object:nil];
 }
 - (void)centralManager:(CBCentralManager *)central didFailToConnectPeripheral:(CBPeripheral *)peripheral error:(NSError *)error {
-    if ([_delegate respondsToSelector:@selector(BLECentralManagerDidFail:)])
-        [_delegate BLECentralManagerDidFail:error.localizedDescription];
+    NSMutableDictionary *userInfo = [[NSMutableDictionary alloc] init];
+    [userInfo setObject:error.localizedDescription forKey:@"Error"];
+    
+    [[NSNotificationCenter defaultCenter] postNotificationName:@"bleCentralManagerDidFail" object:nil userInfo: userInfo];
 }
 - (void)centralManager:(CBCentralManager *)central didDisconnectPeripheral:(CBPeripheral *)peripheral error:(NSError *)error {
     [self RemoveSavedPeripheralMac];
-    if ([_delegate respondsToSelector:@selector(BLECentralManagerDidDisconnect)])
-        [_delegate BLECentralManagerDidDisconnect];
+    [[NSNotificationCenter defaultCenter] postNotificationName:@"bleCentralManagerDidDisconnect" object:nil];
 }
 - (void)centralManager:(CBCentralManager *)central willRestoreState:(NSDictionary<NSString *,id> *)dict {
     NSArray *restoredPeripherals = [dict valueForKey: CBCentralManagerRestoredStatePeripheralsKey];
@@ -160,8 +160,10 @@
     _localPeriperal = [peripherals firstObject];
     _localPeriperal.delegate = self;
     
-    if ([_delegate respondsToSelector:@selector(BLECentralManagerDidGetPaired:)])
-        [_delegate BLECentralManagerDidGetPaired:peripherals];
+    NSMutableDictionary *userInfo = [[NSMutableDictionary alloc] init];
+    [userInfo setObject:peripherals forKey:@"PairedList"];
+    
+    [[NSNotificationCenter defaultCenter] postNotificationName:@"bleCentralManagerDidGetPaired" object:nil userInfo: userInfo];
 }
 
 #pragma mark - Peripheral Delegate
@@ -175,11 +177,12 @@
     }
 }
 - (void)peripheral:(CBPeripheral *)peripheral didReadRSSI:(NSNumber *)RSSI error:(NSError *)error {
-    if ([_delegate respondsToSelector:@selector(BLECentralManagerDidReadRSSI:)])
-        [_delegate BLECentralManagerDidReadRSSI: RSSI.integerValue];
+    NSMutableDictionary *userInfo = [[NSMutableDictionary alloc] init];
+    [userInfo setObject:[NSNumber numberWithInt:RSSI.intValue] forKey:@"RSSIValue"];
+    
+    [[NSNotificationCenter defaultCenter] postNotificationName:@"bleCentralManagerDidReadRSSI" object:nil userInfo: userInfo];
 }
-- (void)peripheral:(CBPeripheral *)peripheral didWriteValueForDescriptor:(CBDescriptor *)descriptor error:(NSError *)error {
-}
+- (void)peripheral:(CBPeripheral *)peripheral didWriteValueForDescriptor:(CBDescriptor *)descriptor error:(NSError *)error {}
 - (void)peripheral:(CBPeripheral *)peripheral didDiscoverCharacteristicsForService:(CBService *)service error:(NSError *)error {
     for (CBCharacteristic *characteristic in service.characteristics) {
         [_discoveredCharacterstics addObject:characteristic];
@@ -187,29 +190,20 @@
             [peripheral setNotifyValue:YES forCharacteristic:characteristic];
     }
 }
-- (void)peripheral:(CBPeripheral *)peripheral didModifyServices:(NSArray<CBService *> *)invalidatedServices {
-    
-}
-- (void)peripheral:(CBPeripheral *)peripheral didUpdateValueForDescriptor:(CBDescriptor *)descriptor error:(NSError *)error {
-    
-}
+- (void)peripheral:(CBPeripheral *)peripheral didModifyServices:(NSArray<CBService *> *)invalidatedServices {}
+- (void)peripheral:(CBPeripheral *)peripheral didUpdateValueForDescriptor:(CBDescriptor *)descriptor error:(NSError *)error {}
 - (void)peripheral:(CBPeripheral *)peripheral didWriteValueForCharacteristic:(CBCharacteristic *)characteristic error:(NSError *)error {
-    if ([_delegate respondsToSelector:@selector(BLECentralManagerDidTransferData)])
-        [_delegate BLECentralManagerDidTransferData];
+    [[NSNotificationCenter defaultCenter] postNotificationName:@"bleCentralManagerDidTransferData" object:nil];
 }
 - (void)peripheral:(CBPeripheral *)peripheral didUpdateValueForCharacteristic:(CBCharacteristic *)characteristic error:(NSError *)error {
-    if ([_delegate respondsToSelector:@selector(BLECentralManagerDidRecieve:)])
-        [_delegate BLECentralManagerDidRecieve: characteristic.value];
-}
-- (void)peripheral:(CBPeripheral *)peripheral didDiscoverIncludedServicesForService:(CBService *)service error:(NSError *)error {
+    NSMutableDictionary *userInfo = [[NSMutableDictionary alloc] init];
+    [userInfo setObject:characteristic.value forKey:@"Data"];
     
+    [[NSNotificationCenter defaultCenter] postNotificationName:@"bleCentralManagerDidRecieve" object:nil userInfo: userInfo];
 }
-- (void)peripheral:(CBPeripheral *)peripheral didDiscoverDescriptorsForCharacteristic:(CBCharacteristic *)characteristic error:(NSError *)error {
-    
-}
-- (void)peripheral:(CBPeripheral *)peripheral didUpdateNotificationStateForCharacteristic:(CBCharacteristic *)characteristic error:(NSError *)error {
-    
-}
+- (void)peripheral:(CBPeripheral *)peripheral didDiscoverIncludedServicesForService:(CBService *)service error:(NSError *)error {}
+- (void)peripheral:(CBPeripheral *)peripheral didDiscoverDescriptorsForCharacteristic:(CBCharacteristic *)characteristic error:(NSError *)error {}
+- (void)peripheral:(CBPeripheral *)peripheral didUpdateNotificationStateForCharacteristic:(CBCharacteristic *)characteristic error:(NSError *)error {}
 
 @end
 

@@ -46,7 +46,10 @@
 }
 
 - (void)connect {
-    [_localCentral connectPeripheral:_localPeriperal options:nil];
+    if (_localPeriperal) {
+        _localPeriperal.delegate = self;
+        [_localCentral connectPeripheral:_localPeriperal options:nil];
+    }
 }
 - (void)connect:(CBPeripheral *)peripheral {
     _localPeriperal = peripheral;
@@ -59,7 +62,8 @@
 }
 
 - (void)disconnect {
-    [_localCentral cancelPeripheralConnection:_localPeriperal];
+    if (_localPeriperal)
+        [_localCentral cancelPeripheralConnection:_localPeriperal];
 }
 
 - (void)scan {
@@ -157,8 +161,6 @@
 }
 - (void)centralManager:(CBCentralManager *)central didDiscoverPairedPeripherals:(NSArray *)peripherals {
     _localCentral = central;
-    _localPeriperal = [peripherals firstObject];
-    _localPeriperal.delegate = self;
     
     NSMutableDictionary *userInfo = [[NSMutableDictionary alloc] init];
     [userInfo setObject:peripherals forKey:@"PairedList"];
@@ -170,8 +172,10 @@
 - (void)peripheralDidUpdateName:(CBPeripheral *)peripheral {}
 - (void)peripheral:(CBPeripheral *)peripheral didDiscoverServices:(NSError *)error {
     for (CBService *service in peripheral.services) {
-        if ([_service_UUID containsObject: service.UUID])
+        if ([_service_UUID containsObject: service.UUID]) {
             [peripheral discoverCharacteristics:_service_characteristic forService:service];
+            [peripheral discoverCharacteristics:_service_notifyCharacteristic forService:service];
+        }
     }
 }
 - (void)peripheral:(CBPeripheral *)peripheral didReadRSSI:(NSNumber *)RSSI error:(NSError *)error {
@@ -183,7 +187,12 @@
 - (void)peripheral:(CBPeripheral *)peripheral didWriteValueForDescriptor:(CBDescriptor *)descriptor error:(NSError *)error {}
 - (void)peripheral:(CBPeripheral *)peripheral didDiscoverCharacteristicsForService:(CBService *)service error:(NSError *)error {
     for (CBCharacteristic *characteristic in service.characteristics) {
-        [_discoveredCharacterstics addObject:characteristic];
+        BOOL duplicatedCharacterstic = false;
+        for (CBCharacteristic *discovered in _discoveredCharacterstics)
+            if (discovered.UUID == characteristic.UUID)
+                duplicatedCharacterstic = true;
+        if (!duplicatedCharacterstic)
+            [_discoveredCharacterstics addObject: characteristic];
         if ([_service_notifyCharacteristic containsObject:characteristic.UUID])
             [peripheral setNotifyValue:YES forCharacteristic:characteristic];
     }

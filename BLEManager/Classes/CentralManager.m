@@ -189,7 +189,7 @@
     for (CBCharacteristic *characteristic in service.characteristics) {
         BOOL duplicatedCharacterstic = false;
         for (CBCharacteristic *discovered in _discoveredCharacterstics)
-            if (discovered.UUID == characteristic.UUID)
+            if ([discovered.UUID isEqual: characteristic.UUID])
                 duplicatedCharacterstic = true;
         if (!duplicatedCharacterstic)
             [_discoveredCharacterstics addObject: characteristic];

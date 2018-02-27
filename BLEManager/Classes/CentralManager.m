@@ -203,10 +203,12 @@
     [[NSNotificationCenter defaultCenter] postNotificationName:BLE_Notification_didWriteData object:nil];
 }
 - (void)peripheral:(CBPeripheral *)peripheral didUpdateValueForCharacteristic:(CBCharacteristic *)characteristic error:(NSError *)error {
-    NSMutableDictionary *userInfo = [[NSMutableDictionary alloc] init];
-    [userInfo setObject:characteristic.value forKey:@"Data"];
-    
-    [[NSNotificationCenter defaultCenter] postNotificationName:BLE_Notification_didReadData object:nil userInfo: userInfo];
+    if (characteristic.value) {
+        NSMutableDictionary *userInfo = [[NSMutableDictionary alloc] init];
+        [userInfo setObject:characteristic.value forKey:@"Data"];
+        
+        [[NSNotificationCenter defaultCenter] postNotificationName:BLE_Notification_didReadData object:nil userInfo: userInfo];
+    }
 }
 - (void)peripheral:(CBPeripheral *)peripheral didDiscoverIncludedServicesForService:(CBService *)service error:(NSError *)error {}
 - (void)peripheral:(CBPeripheral *)peripheral didDiscoverDescriptorsForCharacteristic:(CBCharacteristic *)characteristic error:(NSError *)error {}

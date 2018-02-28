@@ -10,28 +10,27 @@
 #import <CoreBluetooth/CoreBluetooth.h>
 #import "MyCharacterstic.h"
 
-@protocol BLEPeripheralManagerDelegate <NSObject>
-@optional
-- (void)PeripheralStateChanged:(CBManagerState )state;
-- (void)PeripheralStartAdvertising;
-- (void)Error:(NSError *)error;
-- (void)PeripheralDidReceivedRead:(CBATTRequest *)request;
-- (void)PeripheralDidReceivedWrite:(NSArray<CBATTRequest *> *)requests;
-
-@end
+#define Peripheral_Notification_StateUpdate    @"blePeripheralManagerStateDidUpdate"
+#define Peripheral_Notification_didStartAdvertising    @"blePeripheralManagerDidStartAdvertising"
+#define Peripheral_Notification_didRestore    @"blePeripheralManagerDidRestore"
+#define Peripheral_Notification_getReadRequest    @"blePeripheralManagerGetReadRequest"
+#define Peripheral_Notification_getWriteRequest    @"blePeripheralManagerGetWriteRequest"
+#define Peripheral_Notification_didConnected    @"blePeripheralManagerDidConnected"
+#define Peripheral_Notification_didDisonnected    @"blePeripheralManagerDidDisonnected"
 
 @interface PeripheralManager : NSObject <CBPeripheralManagerDelegate>
 
-@property (nonatomic, strong) CBUUID *ServiceUUID;
-@property (nonatomic, strong) NSArray *ServiceCharacteristics;
+@property (nonatomic, strong) CBUUID *service_UUID;
+@property (nonatomic, strong) NSArray *service_characteristics;
 @property (nonatomic, strong) NSString *LocalName;
-@property (nonatomic, weak) id<BLEPeripheralManagerDelegate> delegate;
 
-+ (PeripheralManager *)SharedInstance;
++ (PeripheralManager *)instance;
 
 - (void)StartAdvertising;
+- (void)StopAdvertising;
 
 - (NSData *)PrepareValue:(NSString *)rawValue;
 
 - (void)PeripheralSendResponse:(CBATTRequest *)request WithResult:(CBATTError )result;
+- (void)PeripheralNotify:(NSData *)value on:(NSArray *)centrals for:(CBMutableCharacteristic *)characterstic;
 @end

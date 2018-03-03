@@ -10,7 +10,6 @@
 
 @interface Peripheral()
 @property (nonatomic, strong) CBPeripheralManager *manager;
-@property (nonatomic, strong) CBCentral *connectedCentral;
 @property (nonatomic, strong) NSMutableArray *subscribedCharacterstics;
 @end
 
@@ -69,10 +68,10 @@
         if ([subscribed.UUID isEqual: characterstic])
             NotifyCharacterstic = subscribed;
     
-    if (NotifyCharacterstic && _connectedCentral)
+    if (NotifyCharacterstic)
         [_manager updateValue: value
                       forCharacteristic: NotifyCharacterstic
-                   onSubscribedCentrals: @[_connectedCentral]];
+                   onSubscribedCentrals: nil];
 }
 
 #pragma mark - Peripheral Manager Delegate
@@ -111,7 +110,6 @@
 - (void)peripheralManager:(CBPeripheralManager *)peripheral central:(CBCentral *)central didSubscribeToCharacteristic:(CBCharacteristic *)characteristic {
     if (![_subscribedCharacterstics containsObject:characteristic])
         [_subscribedCharacterstics addObject:(CBMutableCharacteristic *)characteristic];
-    _connectedCentral = central;
     
     NSMutableDictionary *userInfo = [[NSMutableDictionary alloc] init];
     [userInfo setObject:central forKey:@"Central"];
@@ -122,7 +120,6 @@
 - (void)peripheralManager:(CBPeripheralManager *)peripheral central:(CBCentral *)central didUnsubscribeFromCharacteristic:(CBCharacteristic *)characteristic {
     if ([_subscribedCharacterstics containsObject:characteristic])
         [_subscribedCharacterstics removeObject:(CBMutableCharacteristic *)characteristic];
-    _connectedCentral = nil;
     
     NSMutableDictionary *userInfo = [[NSMutableDictionary alloc] init];
     [userInfo setObject:central forKey:@"Central"];

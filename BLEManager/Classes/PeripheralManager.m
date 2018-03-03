@@ -18,6 +18,7 @@
 - (id)init {
     self = [super init];
     if (self) {
+        _subscribedCharacterstics = [[NSMutableArray alloc] init];
         dispatch_queue_t queue = dispatch_queue_create("BLEManager.Peripheral", DISPATCH_QUEUE_CONCURRENT);
         _manager = [[CBPeripheralManager alloc] initWithDelegate:self queue:queue];
     }

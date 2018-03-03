@@ -8,44 +8,45 @@
 
 #import "PeripheralManager.h"
 
-@interface PeripheralManager()
-@property (nonatomic, strong) CBPeripheralManager *peripheralManager;
-@property (nonatomic, strong) CBMutableService *bluetoothService;
+@interface Peripheral()
+@property (nonatomic, strong) CBPeripheralManager *manager;
+@property (nonatomic, strong) CBCentral *connectedCentral;
+@property (nonatomic, strong) NSMutableArray *subscribedCharacterstics;
 @end
 
-@implementation PeripheralManager
+@implementation Peripheral
 
 - (id)init {
     self = [super init];
     if (self) {
-        _peripheralManager = [[CBPeripheralManager alloc]  initWithDelegate:self queue:nil];
+        dispatch_queue_t queue = dispatch_queue_create("BLEManager.Peripheral", DISPATCH_QUEUE_CONCURRENT);
+        _manager = [[CBPeripheralManager alloc] initWithDelegate:self queue:queue];
     }
     return self;
 }
 
-+ (PeripheralManager *)instance {
-    static PeripheralManager *singleton = nil;
++ (Peripheral *)instance {
+    static Peripheral *singleton = nil;
     if (!singleton) {
-        singleton = [PeripheralManager new];
+        singleton = [Peripheral new];
     }
     return singleton;
 }
 
 - (void)StartAdvertising {
-    _bluetoothService = [[CBMutableService alloc] initWithType:_service_UUID primary:YES];
+    CBMutableService *bluetoothService = [[CBMutableService alloc] initWithType:_service_UUID primary:YES];
     NSMutableArray *characteristics = [[NSMutableArray alloc] init];
-    for (MyCharacterstic *characteristic in _service_characteristics) {
+    for (MyCharacterstic *characteristic in _service_characteristics)
         [characteristics addObject: [characteristic GetObject]];
-    }
-    _bluetoothService.characteristics = characteristics;
-    [_peripheralManager addService:_bluetoothService];
+    bluetoothService.characteristics = characteristics;
+    [_manager addService:bluetoothService];
 }
 
 - (void)StopAdvertising {
-    [_peripheralManager stopAdvertising];
+    [_manager stopAdvertising];
 }
 
-- (NSData *)PrepareValue:(NSString *)rawValue {
+- (NSData *)Value:(NSString *)rawValue {
     if (rawValue) {
         return [[NSData alloc] initWithBase64EncodedString:[self ConvertStringToBase64:rawValue]
                                                    options: NSDataBase64DecodingIgnoreUnknownCharacters];
@@ -59,13 +60,19 @@
     return base64String;
 }
 
-- (void)PeripheralSendResponse:(CBATTRequest *)request WithResult:(CBATTError )result {
-    [_peripheralManager respondToRequest:request withResult:result];
+- (void)SendResponse:(CBATTRequest *)request WithResult:(CBATTError )result {
+    [_manager respondToRequest:request withResult:result];
 }
-- (void)PeripheralNotify:(NSData *)value on:(NSArray *)centrals for:(CBMutableCharacteristic *)characterstic {
-    [_peripheralManager updateValue: value
-                  forCharacteristic: characterstic
-               onSubscribedCentrals: centrals];
+- (void)SendNotify:(NSData *)value onCharacterstic:(CBUUID *)characterstic {
+    CBMutableCharacteristic *NotifyCharacterstic = nil;
+    for (CBMutableCharacteristic *subscribed in _subscribedCharacterstics)
+        if ([subscribed.UUID isEqual: characterstic])
+            NotifyCharacterstic = subscribed;
+    
+    if (NotifyCharacterstic && _connectedCentral)
+        [_manager updateValue: value
+                      forCharacteristic: NotifyCharacterstic
+                   onSubscribedCentrals: @[_connectedCentral]];
 }
 
 #pragma mark - Peripheral Manager Delegate
@@ -73,15 +80,15 @@
     NSMutableDictionary *userInfo = [[NSMutableDictionary alloc] init];
     [userInfo setObject:[NSNumber numberWithInt:peripheral.state] forKey:@"State"];
     
-    [[NSNotificationCenter defaultCenter] postNotificationName:Peripheral_Notification_StateUpdate object:nil userInfo:userInfo];
+    [[NSNotificationCenter defaultCenter] postNotificationName:PN_StateUpdate object:nil userInfo:userInfo];
 }
 - (void)peripheralManager:(CBPeripheralManager *)peripheral didAddService:(CBService *)service error:(NSError *)error {
-    [_peripheralManager startAdvertising:@{CBAdvertisementDataLocalNameKey: _LocalName,
-                                           CBAdvertisementDataServiceUUIDsKey: @[service.UUID]}];
+    [_manager startAdvertising:@{CBAdvertisementDataLocalNameKey: _LocalName,
+                                 CBAdvertisementDataServiceUUIDsKey: @[service.UUID]}];
         
 }
 - (void)peripheralManagerDidStartAdvertising:(CBPeripheralManager *)peripheral error:(NSError *)error {
-    [[NSNotificationCenter defaultCenter] postNotificationName:Peripheral_Notification_didStartAdvertising object:nil];
+    [[NSNotificationCenter defaultCenter] postNotificationName:PN_didStartAdvertising object:nil];
 }
 - (void)peripheralManager:(CBPeripheralManager *)peripheral willRestoreState:(NSDictionary<NSString *,id> *)dict {}
 - (void)peripheralManager:(CBPeripheralManager *)peripheral didReceiveReadRequest:(CBATTRequest *)request {
@@ -89,7 +96,7 @@
         NSMutableDictionary *userInfo = [[NSMutableDictionary alloc] init];
         [userInfo setObject:request forKey:@"Request"];
         
-        [[NSNotificationCenter defaultCenter] postNotificationName:Peripheral_Notification_getReadRequest object:nil userInfo:userInfo];
+        [[NSNotificationCenter defaultCenter] postNotificationName:PN_didGetReadRequest object:nil userInfo:userInfo];
     }
 }
 - (void)peripheralManager:(CBPeripheralManager *)peripheral didReceiveWriteRequests:(NSArray<CBATTRequest *> *)requests {
@@ -97,22 +104,30 @@
         NSMutableDictionary *userInfo = [[NSMutableDictionary alloc] init];
         [userInfo setObject:requests forKey:@"Requests"];
         
-        [[NSNotificationCenter defaultCenter] postNotificationName:Peripheral_Notification_getWriteRequest object:nil userInfo:userInfo];
+        [[NSNotificationCenter defaultCenter] postNotificationName:PN_didGetWriteRequest object:nil userInfo:userInfo];
     }
 }
 - (void)peripheralManagerIsReadyToUpdateSubscribers:(CBPeripheralManager *)peripheral {}
 - (void)peripheralManager:(CBPeripheralManager *)peripheral central:(CBCentral *)central didSubscribeToCharacteristic:(CBCharacteristic *)characteristic {
+    if (![_subscribedCharacterstics containsObject:characteristic])
+        [_subscribedCharacterstics addObject:(CBMutableCharacteristic *)characteristic];
+    _connectedCentral = central;
+    
     NSMutableDictionary *userInfo = [[NSMutableDictionary alloc] init];
     [userInfo setObject:central forKey:@"Central"];
     [userInfo setObject:characteristic forKey:@"Characteristic"];
     
-    [[NSNotificationCenter defaultCenter] postNotificationName:Peripheral_Notification_didConnected object:nil userInfo:userInfo];
+    [[NSNotificationCenter defaultCenter] postNotificationName:PN_didConnected object:nil userInfo:userInfo];
 }
 - (void)peripheralManager:(CBPeripheralManager *)peripheral central:(CBCentral *)central didUnsubscribeFromCharacteristic:(CBCharacteristic *)characteristic {
+    if ([_subscribedCharacterstics containsObject:characteristic])
+        [_subscribedCharacterstics removeObject:(CBMutableCharacteristic *)characteristic];
+    _connectedCentral = nil;
+    
     NSMutableDictionary *userInfo = [[NSMutableDictionary alloc] init];
     [userInfo setObject:central forKey:@"Central"];
     [userInfo setObject:characteristic forKey:@"Characteristic"];
     
-    [[NSNotificationCenter defaultCenter] postNotificationName:Peripheral_Notification_didDisonnected object:nil userInfo:userInfo];
+    [[NSNotificationCenter defaultCenter] postNotificationName:PN_didDisonnected object:nil userInfo:userInfo];
 }
 @end

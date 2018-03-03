@@ -10,27 +10,27 @@
 #import <CoreBluetooth/CoreBluetooth.h>
 #import "MyCharacterstic.h"
 
-#define Peripheral_Notification_StateUpdate    @"blePeripheralManagerStateDidUpdate"
-#define Peripheral_Notification_didStartAdvertising    @"blePeripheralManagerDidStartAdvertising"
-#define Peripheral_Notification_didRestore    @"blePeripheralManagerDidRestore"
-#define Peripheral_Notification_getReadRequest    @"blePeripheralManagerGetReadRequest"
-#define Peripheral_Notification_getWriteRequest    @"blePeripheralManagerGetWriteRequest"
-#define Peripheral_Notification_didConnected    @"blePeripheralManagerDidConnected"
-#define Peripheral_Notification_didDisonnected    @"blePeripheralManagerDidDisonnected"
+#define PN_StateUpdate              @"blePeripheralManagerStateDidUpdate"
+#define PN_didStartAdvertising      @"blePeripheralManagerDidStartAdvertising"
+#define PN_didRestore               @"blePeripheralManagerDidRestore"
+#define PN_didGetReadRequest        @"blePeripheralManagerGetReadRequest"
+#define PN_didGetWriteRequest       @"blePeripheralManagerGetWriteRequest"
+#define PN_didConnected             @"blePeripheralManagerDidConnected"
+#define PN_didDisonnected           @"blePeripheralManagerDidDisonnected"
 
-@interface PeripheralManager : NSObject <CBPeripheralManagerDelegate>
+@interface Peripheral : NSObject <CBPeripheralManagerDelegate>
 
 @property (nonatomic, strong) CBUUID *service_UUID;
 @property (nonatomic, strong) NSArray *service_characteristics;
 @property (nonatomic, strong) NSString *LocalName;
 
-+ (PeripheralManager *)instance;
++ (Peripheral *)instance;
 
 - (void)StartAdvertising;
 - (void)StopAdvertising;
 
-- (NSData *)PrepareValue:(NSString *)rawValue;
+- (NSData *)Value:(NSString *)rawValue;
 
-- (void)PeripheralSendResponse:(CBATTRequest *)request WithResult:(CBATTError )result;
-- (void)PeripheralNotify:(NSData *)value on:(NSArray *)centrals for:(CBMutableCharacteristic *)characterstic;
+- (void)SendResponse:(CBATTRequest *)request WithResult:(CBATTError )result;
+- (void)SendNotify:(NSData *)value onCharacterstic:(CBUUID *)characterstic;
 @end

@@ -11,11 +11,9 @@
 #define VANCOSYS_KEY    [[NSBundle mainBundle] bundleIdentifier]
 
 @interface CentralManager()
-@property (nonatomic, strong) CBCentralManager *centralManager;
-@property (nonatomic, strong) CBCentralManager *localCentral;
-@property (nonatomic, strong) CBPeripheral *localPeriperal;
+@property (nonatomic, strong) CBCentralManager *manager;
+@property (nonatomic, strong) CBPeripheral *periperal;
 @property (nonatomic, strong) NSMutableArray *discoveredCharacterstics;
-@property (nonatomic, strong) NSString *connectedMacAddress;
 @end
 
 @implementation CentralManager
@@ -23,16 +21,15 @@
 - (id)init {
     self = [super init];
     if (self) {
-        _connectedMacAddress = @"";
-        _RSSI_filter = -50;
+        _discovery_RSSI_filter = -50;
         _discoveredCharacterstics = [NSMutableArray new];
         
-        dispatch_queue_t centralQueu = dispatch_queue_create("com.Vancosys", NULL);
-        _centralManager = [[CBCentralManager alloc]
-                           initWithDelegate:self
-                           queue:centralQueu
-                           options: @{CBCentralManagerOptionRestoreIdentifierKey:VANCOSYS_KEY,
-                                      CBCentralManagerOptionShowPowerAlertKey: @YES}];
+        dispatch_queue_t queue = dispatch_queue_create("BLEManager.Central", NULL);
+        _manager = [[CBCentralManager alloc]
+                    initWithDelegate:self
+                    queue: queue
+                    options: @{CBCentralManagerOptionRestoreIdentifierKey: VANCOSYS_KEY,
+                               CBCentralManagerOptionShowPowerAlertKey: @YES}];
     }
     return self;
     
@@ -46,61 +43,63 @@
 }
 
 - (void)connect {
-    if (_localPeriperal) {
-        _localPeriperal.delegate = self;
-        [_localCentral connectPeripheral:_localPeriperal options:nil];
+    if (_periperal) {
+        _periperal.delegate = self;
+        [_manager connectPeripheral:_periperal options:nil];
     }
 }
 - (void)connect:(CBPeripheral *)peripheral {
-    _localPeriperal = peripheral;
+    _periperal = peripheral;
     [self connect];
 }
 
 - (void)getPairedList {
-    [self centralManager:_centralManager didDiscoverPairedPeripherals:
-     [_centralManager retrieveConnectedPeripheralsWithServices:_service_UUID]];
+    NSArray *pairedPeriperhals = [_manager retrieveConnectedPeripheralsWithServices:_service_UUID];
+    [self centralManager:_manager didDiscoverPairedPeripherals: pairedPeriperhals];
 }
 
 - (void)disconnect {
-    if (_localPeriperal)
-        [_localCentral cancelPeripheralConnection:_localPeriperal];
+    if (_periperal)
+        [_manager cancelPeripheralConnection:_periperal];
 }
 
 - (void)scan {
     [self disconnect];
     [self stopScan];
-    [_centralManager scanForPeripheralsWithServices:_service_UUID options:nil];
+    [_manager scanForPeripheralsWithServices:_service_UUID options:nil];
 }
 
 - (void)stopScan {
-    [_centralManager stopScan];
+    [_manager stopScan];
 }
 
 - (void)readRSSI {
-    [_localPeriperal readRSSI];
+    [_periperal readRSSI];
 }
 
 - (void)read:(CBUUID *)Characterstic {
     for (CBCharacteristic *characterstic in _discoveredCharacterstics)
         if ([characterstic.UUID.UUIDString isEqualToString: Characterstic.UUIDString])
-            [_localPeriperal readValueForCharacteristic: characterstic];
+            [_periperal readValueForCharacteristic: characterstic];
 }
 
 - (void)write:(NSData *)data on:(CBUUID *)Characterstic {
+    [self write:data on:Characterstic with:CBCharacteristicWriteWithResponse];
+}
+- (void)write:(NSData *)data on:(CBUUID *)Characterstic with:(CBCharacteristicWriteType )type {
     for (CBCharacteristic *characterstic in _discoveredCharacterstics)
         if ([characterstic.UUID.UUIDString isEqualToString: Characterstic.UUIDString])
-            [_localPeriperal writeValue: data
-                      forCharacteristic: characterstic
-                                   type: CBCharacteristicWriteWithResponse];
+            [_periperal writeValue: data
+                 forCharacteristic: characterstic
+                              type: type];
 }
 
 - (NSString *)connectedCentralAddress {
-    return _connectedMacAddress;
+    return _periperal.identifier.UUIDString;
 }
 
 #pragma mark - Cache Connected Peripheral
 - (void)Save:(NSString *)peripheralMac {
-    _connectedMacAddress = peripheralMac;
     [[NSUserDefaults standardUserDefaults] setValue:peripheralMac forKey:VANCOSYS_KEY];
     [[NSUserDefaults standardUserDefaults] synchronize];
 }
@@ -108,7 +107,6 @@
     return [[NSUserDefaults standardUserDefaults] objectForKey:VANCOSYS_KEY];
 }
 - (void)RemoveSavedPeripheralMac {
-    _connectedMacAddress = @"";
     [[NSUserDefaults standardUserDefaults] removeObjectForKey:VANCOSYS_KEY];
 }
 
@@ -120,11 +118,11 @@
     [[NSNotificationCenter defaultCenter] postNotificationName:BLE_Notification_StateUpdate object:nil userInfo: userInfo];
 }
 - (void)centralManager:(CBCentralManager *)central didDiscoverPeripheral:(CBPeripheral *)peripheral advertisementData:(NSDictionary<NSString *,id> *)advertisementData RSSI:(NSNumber *)RSSI {
-    _localCentral = central;
-    _localPeriperal = peripheral;
-    _localPeriperal.delegate = self;
+    _manager = central;
+    _periperal = peripheral;
+    _periperal.delegate = self;
     
-    if (RSSI.integerValue > _RSSI_filter && RSSI.integerValue < 0) {
+    if (RSSI.integerValue > _discovery_RSSI_filter && RSSI.integerValue < 0) {
         NSMutableDictionary *userInfo = [[NSMutableDictionary alloc] init];
         [userInfo setObject:peripheral.identifier.UUIDString forKey:@"MacAddress"];
         
@@ -135,7 +133,7 @@
     [self Save: peripheral.identifier.UUIDString];
     [central stopScan];
     
-    [_localPeriperal discoverServices: _service_UUID];
+    [_periperal discoverServices: _service_UUID];
     [[NSNotificationCenter defaultCenter] postNotificationName:BLE_Notification_didConnect object:nil];
 }
 - (void)centralManager:(CBCentralManager *)central didFailToConnectPeripheral:(CBPeripheral *)peripheral error:(NSError *)error {
@@ -153,14 +151,14 @@
     if (restoredPeripherals)
         for (CBPeripheral *peripheral in restoredPeripherals)
             if ([peripheral.identifier.UUIDString isEqualToString:[self GetPeripheralMac]]) {
-                _localCentral = central;
-                _localPeriperal = peripheral;
-                _localPeriperal.delegate = self;
+                _manager = central;
+                _periperal = peripheral;
+                _periperal.delegate = self;
                 [[NSNotificationCenter defaultCenter] postNotificationName:BLE_Notification_didRestored object:nil];
             }
 }
 - (void)centralManager:(CBCentralManager *)central didDiscoverPairedPeripherals:(NSArray *)peripherals {
-    _localCentral = central;
+    _manager = central;
     
     NSMutableDictionary *userInfo = [[NSMutableDictionary alloc] init];
     [userInfo setObject:peripherals forKey:@"PairedList"];

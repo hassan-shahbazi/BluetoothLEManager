@@ -33,8 +33,8 @@
     return singleton;
 }
 
-- (void)StartAdvertising {
-    CBMutableService *bluetoothService = [[CBMutableService alloc] initWithType:_service_UUID primary:YES];
+- (void)StartAdvertising:(BOOL )primary {
+    CBMutableService *bluetoothService = [[CBMutableService alloc] initWithType:_service_UUID primary:primary];
     NSMutableArray *characteristics = [[NSMutableArray alloc] init];
     for (MyCharacterstic *characteristic in _service_characteristics)
         [characteristics addObject: [characteristic GetObject]];

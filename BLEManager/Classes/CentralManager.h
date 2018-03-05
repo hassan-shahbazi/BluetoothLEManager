@@ -25,7 +25,7 @@
 @property (nonatomic, strong) NSArray *service_UUID;
 @property (nonatomic, strong) NSArray *service_characteristic;
 @property (nonatomic, strong) NSArray *service_notifyCharacteristic;
-@property (nonatomic, assign) NSInteger RSSI_filter;
+@property (nonatomic, assign) NSInteger discovery_RSSI_filter;
 
 + (CentralManager *)instance;
 
@@ -45,6 +45,7 @@
 - (void)read:(CBUUID *)Characterstic;
 
 - (void)write:(NSData *)data on:(CBUUID *)Characterstic;
+- (void)write:(NSData *)data on:(CBUUID *)Characterstic with:(CBCharacteristicWriteType )type;
 
 - (NSString *)connectedCentralAddress;
 

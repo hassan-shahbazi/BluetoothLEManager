@@ -10,6 +10,8 @@
 
 @interface Peripheral()
 @property (nonatomic, strong) CBPeripheralManager *manager;
+@property (nonatomic, strong) CBMutableService *mainService;
+@property (nonatomic, strong) NSMutableArray *services;
 @property (nonatomic, strong) NSMutableArray *subscribedCharacterstics;
 @end
 
@@ -19,6 +21,8 @@
     self = [super init];
     if (self) {
         _subscribedCharacterstics = [[NSMutableArray alloc] init];
+        _services = [[NSMutableArray alloc] init];
+        
         dispatch_queue_t queue = dispatch_queue_create("BLEManager.Peripheral", DISPATCH_QUEUE_CONCURRENT);
         _manager = [[CBPeripheralManager alloc] initWithDelegate:self queue:queue];
     }
@@ -33,13 +37,22 @@
     return singleton;
 }
 
-- (void)StartAdvertising:(BOOL )primary {
-    CBMutableService *bluetoothService = [[CBMutableService alloc] initWithType:_service_UUID primary:primary];
+- (void)AddService:(BOOL )primary {
+    CBMutableService *Service = [[CBMutableService alloc] initWithType:_service_UUID primary:primary];
+    if (primary)
+        _mainService = Service;
+    
     NSMutableArray *characteristics = [[NSMutableArray alloc] init];
     for (MyCharacterstic *characteristic in _service_characteristics)
         [characteristics addObject: [characteristic GetObject]];
-    bluetoothService.characteristics = characteristics;
-    [_manager addService:bluetoothService];
+    Service.characteristics = characteristics;
+    [_manager addService: Service];
+}
+
+- (void)StartAdvertising {
+    _mainService.includedServices = _services;
+    [_manager startAdvertising:@{CBAdvertisementDataLocalNameKey: _LocalName,
+                                 CBAdvertisementDataServiceUUIDsKey: @[_mainService.UUID]}];
 }
 
 - (void)StopAdvertising {
@@ -83,9 +96,8 @@
     [[NSNotificationCenter defaultCenter] postNotificationName:PN_StateUpdate object:nil userInfo:userInfo];
 }
 - (void)peripheralManager:(CBPeripheralManager *)peripheral didAddService:(CBService *)service error:(NSError *)error {
-    [_manager startAdvertising:@{CBAdvertisementDataLocalNameKey: _LocalName,
-                                 CBAdvertisementDataServiceUUIDsKey: @[service.UUID]}];
-        
+    if (!service.isPrimary)
+        [_services addObject:service];
 }
 - (void)peripheralManagerDidStartAdvertising:(CBPeripheralManager *)peripheral error:(NSError *)error {
     [[NSNotificationCenter defaultCenter] postNotificationName:PN_didStartAdvertising object:nil];

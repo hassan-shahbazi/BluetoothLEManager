@@ -9,16 +9,16 @@
 #import <CoreBluetooth/CoreBluetooth.h>
 #import <Foundation/Foundation.h>
 
-#define BLE_Notification_StateUpdate    @"bleCentralManagerStateDidUpdate"
-#define BLE_Notification_didFound       @"bleCentralManagerDidFound"
-#define BLE_Notification_didConnect     @"bleCentralManagerDidConnect"
-#define BLE_Notification_didDisconnect  @"bleCentralManagerDidDisconnect"
-#define BLE_Notification_didFailed      @"bleCentralManagerDidFail"
-#define BLE_Notification_PairedList     @"bleCentralManagerDidGetPaired"
-#define BLE_Notification_didReadRSSI    @"bleCentralManagerDidReadRSSI"
-#define BLE_Notification_didWriteData   @"bleCentralManagerDidWrireData"
-#define BLE_Notification_didReadData    @"bleCentralManagerDidReadData"
-#define BLE_Notification_didRestored    @"bleCentralManagerDidRestored"
+#define CN_StateUpdate    @"bleCentralManagerStateDidUpdate"
+#define CN_didFound       @"bleCentralManagerDidFound"
+#define CN_didConnect     @"bleCentralManagerDidConnect"
+#define CN_didDisconnect  @"bleCentralManagerDidDisconnect"
+#define CN_didFailed      @"bleCentralManagerDidFail"
+#define CN_PairedList     @"bleCentralManagerDidGetPaired"
+#define CN_didReadRSSI    @"bleCentralManagerDidReadRSSI"
+#define CN_didWriteData   @"bleCentralManagerDidWrireData"
+#define CN_didReadData    @"bleCentralManagerDidReadData"
+#define CN_didRestored    @"bleCentralManagerDidRestored"
 
 @interface CentralManager : NSObject <CBCentralManagerDelegate, CBPeripheralDelegate>
 

@@ -26,7 +26,9 @@
 
 + (Peripheral *)instance;
 
-- (void)StartAdvertising:(BOOL )primary;
+- (void)AddService:(BOOL )primary;
+
+- (void)StartAdvertising;
 - (void)StopAdvertising;
 
 - (NSData *)Value:(NSString *)rawValue;

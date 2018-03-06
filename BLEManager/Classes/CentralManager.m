@@ -24,10 +24,9 @@
         _discovery_RSSI_filter = -50;
         _discoveredCharacterstics = [NSMutableArray new];
         
-        dispatch_queue_t queue = dispatch_queue_create("BLEManager.Central", NULL);
+        dispatch_queue_t queue = dispatch_queue_create("BLEManager.Central", DISPATCH_QUEUE_CONCURRENT);
         _manager = [[CBCentralManager alloc]
-                    initWithDelegate:self
-                    queue: queue
+                    initWithDelegate:self queue: queue
                     options: @{CBCentralManagerOptionRestoreIdentifierKey: VANCOSYS_KEY,
                                CBCentralManagerOptionShowPowerAlertKey: @YES}];
     }
@@ -115,7 +114,7 @@
     NSMutableDictionary *userInfo = [[NSMutableDictionary alloc] init];
     [userInfo setObject:[NSNumber numberWithInt:central.state] forKey:@"State"];
     
-    [[NSNotificationCenter defaultCenter] postNotificationName:BLE_Notification_StateUpdate object:nil userInfo: userInfo];
+    [[NSNotificationCenter defaultCenter] postNotificationName:CN_StateUpdate object:nil userInfo: userInfo];
 }
 - (void)centralManager:(CBCentralManager *)central didDiscoverPeripheral:(CBPeripheral *)peripheral advertisementData:(NSDictionary<NSString *,id> *)advertisementData RSSI:(NSNumber *)RSSI {
     _manager = central;
@@ -126,7 +125,7 @@
         NSMutableDictionary *userInfo = [[NSMutableDictionary alloc] init];
         [userInfo setObject:peripheral.identifier.UUIDString forKey:@"MacAddress"];
         
-        [[NSNotificationCenter defaultCenter] postNotificationName:BLE_Notification_didFound object:nil userInfo: userInfo];
+        [[NSNotificationCenter defaultCenter] postNotificationName:CN_didFound object:nil userInfo: userInfo];
     }
 }
 - (void)centralManager:(CBCentralManager *)central didConnectPeripheral:(CBPeripheral *)peripheral {
@@ -134,17 +133,17 @@
     [central stopScan];
     
     [_periperal discoverServices: _service_UUID];
-    [[NSNotificationCenter defaultCenter] postNotificationName:BLE_Notification_didConnect object:nil];
+    [[NSNotificationCenter defaultCenter] postNotificationName:CN_didConnect object:nil];
 }
 - (void)centralManager:(CBCentralManager *)central didFailToConnectPeripheral:(CBPeripheral *)peripheral error:(NSError *)error {
     NSMutableDictionary *userInfo = [[NSMutableDictionary alloc] init];
     [userInfo setObject:error.localizedDescription forKey:@"Error"];
     
-    [[NSNotificationCenter defaultCenter] postNotificationName:BLE_Notification_didFailed object:nil userInfo: userInfo];
+    [[NSNotificationCenter defaultCenter] postNotificationName:CN_didFailed object:nil userInfo: userInfo];
 }
 - (void)centralManager:(CBCentralManager *)central didDisconnectPeripheral:(CBPeripheral *)peripheral error:(NSError *)error {
     [self RemoveSavedPeripheralMac];
-    [[NSNotificationCenter defaultCenter] postNotificationName:BLE_Notification_didDisconnect object:nil];
+    [[NSNotificationCenter defaultCenter] postNotificationName:CN_didDisconnect object:nil];
 }
 - (void)centralManager:(CBCentralManager *)central willRestoreState:(NSDictionary<NSString *,id> *)dict {
     NSArray *restoredPeripherals = [dict valueForKey: CBCentralManagerRestoredStatePeripheralsKey];
@@ -154,7 +153,7 @@
                 _manager = central;
                 _periperal = peripheral;
                 _periperal.delegate = self;
-                [[NSNotificationCenter defaultCenter] postNotificationName:BLE_Notification_didRestored object:nil];
+                [[NSNotificationCenter defaultCenter] postNotificationName:CN_didRestored object:nil];
             }
 }
 - (void)centralManager:(CBCentralManager *)central didDiscoverPairedPeripherals:(NSArray *)peripherals {
@@ -163,7 +162,7 @@
     NSMutableDictionary *userInfo = [[NSMutableDictionary alloc] init];
     [userInfo setObject:peripherals forKey:@"PairedList"];
     
-    [[NSNotificationCenter defaultCenter] postNotificationName:BLE_Notification_PairedList object:nil userInfo: userInfo];
+    [[NSNotificationCenter defaultCenter] postNotificationName:CN_PairedList object:nil userInfo: userInfo];
 }
 
 #pragma mark - Peripheral Delegate
@@ -180,7 +179,7 @@
     NSMutableDictionary *userInfo = [[NSMutableDictionary alloc] init];
     [userInfo setObject:[NSNumber numberWithInt:RSSI.intValue] forKey:@"RSSIValue"];
     
-    [[NSNotificationCenter defaultCenter] postNotificationName:BLE_Notification_didReadRSSI object:nil userInfo: userInfo];
+    [[NSNotificationCenter defaultCenter] postNotificationName:CN_didReadRSSI object:nil userInfo: userInfo];
 }
 - (void)peripheral:(CBPeripheral *)peripheral didWriteValueForDescriptor:(CBDescriptor *)descriptor error:(NSError *)error {}
 - (void)peripheral:(CBPeripheral *)peripheral didDiscoverCharacteristicsForService:(CBService *)service error:(NSError *)error {
@@ -198,14 +197,14 @@
 - (void)peripheral:(CBPeripheral *)peripheral didModifyServices:(NSArray<CBService *> *)invalidatedServices {}
 - (void)peripheral:(CBPeripheral *)peripheral didUpdateValueForDescriptor:(CBDescriptor *)descriptor error:(NSError *)error {}
 - (void)peripheral:(CBPeripheral *)peripheral didWriteValueForCharacteristic:(CBCharacteristic *)characteristic error:(NSError *)error {
-    [[NSNotificationCenter defaultCenter] postNotificationName:BLE_Notification_didWriteData object:nil];
+    [[NSNotificationCenter defaultCenter] postNotificationName:CN_didWriteData object:nil];
 }
 - (void)peripheral:(CBPeripheral *)peripheral didUpdateValueForCharacteristic:(CBCharacteristic *)characteristic error:(NSError *)error {
     if (characteristic.value) {
         NSMutableDictionary *userInfo = [[NSMutableDictionary alloc] init];
         [userInfo setObject:characteristic.value forKey:@"Data"];
         
-        [[NSNotificationCenter defaultCenter] postNotificationName:BLE_Notification_didReadData object:nil userInfo: userInfo];
+        [[NSNotificationCenter defaultCenter] postNotificationName:CN_didReadData object:nil userInfo: userInfo];
     }
 }
 - (void)peripheral:(CBPeripheral *)peripheral didDiscoverIncludedServicesForService:(CBService *)service error:(NSError *)error {}

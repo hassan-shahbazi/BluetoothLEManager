@@ -13,6 +13,7 @@
 
 @property (nonatomic, strong) CBUUID *UUID;
 @property (nonatomic, strong) NSData *Value;
+@property (nonatomic, nullable, strong) NSArray<CBDescriptor *>* Descriptor;
 @property (nonatomic, assign) CBAttributePermissions Permission;
 @property (nonatomic, assign) CBCharacteristicProperties Property;
 

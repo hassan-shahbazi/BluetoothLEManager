@@ -16,7 +16,9 @@
 @implementation MyCharacterstic
 
 - (CBMutableCharacteristic *)GetObject {
-    return [[CBMutableCharacteristic alloc] initWithType:_UUID properties:_Property value: _Value permissions:_Permission];
+    CBMutableCharacteristic *characteristic = [[CBMutableCharacteristic alloc] initWithType:_UUID properties:_Property value: _Value permissions:_Permission];
+    characteristic.descriptors = _Descriptor;
+    return characteristic;
 }
 
 @end

@@ -49,6 +49,18 @@
     [_manager addService: Service];
 }
 
+- (void)RemoveService:(CBUUID *)uuid {
+    CBMutableService *Service;
+    for (CBMutableService *service in _services)
+        if ([service.UUID isEqual:uuid])
+            Service = service;
+    [_manager removeService:Service];
+}
+
+- (void)RemoveAllServices {
+    [_manager removeAllServices];
+}
+
 - (void)StartAdvertising {
     _mainService.includedServices = _services;
     [_manager startAdvertising:@{CBAdvertisementDataLocalNameKey: _LocalName,
@@ -76,6 +88,7 @@
 - (void)SendResponse:(CBATTRequest *)request WithResult:(CBATTError )result {
     [_manager respondToRequest:request withResult:result];
 }
+
 - (void)SendNotify:(NSData *)value onCharacterstic:(CBUUID *)characterstic {
     CBMutableCharacteristic *NotifyCharacterstic = nil;
     for (CBMutableCharacteristic *subscribed in _subscribedCharacterstics)
@@ -95,14 +108,17 @@
     
     [[NSNotificationCenter defaultCenter] postNotificationName:PN_StateUpdate object:nil userInfo:userInfo];
 }
+
 - (void)peripheralManager:(CBPeripheralManager *)peripheral didAddService:(CBService *)service error:(NSError *)error {
-    if (!service.isPrimary)
-        [_services addObject:service];
+    [_services addObject:service];
 }
+
 - (void)peripheralManagerDidStartAdvertising:(CBPeripheralManager *)peripheral error:(NSError *)error {
     [[NSNotificationCenter defaultCenter] postNotificationName:PN_didStartAdvertising object:nil];
 }
+
 - (void)peripheralManager:(CBPeripheralManager *)peripheral willRestoreState:(NSDictionary<NSString *,id> *)dict {}
+
 - (void)peripheralManager:(CBPeripheralManager *)peripheral didReceiveReadRequest:(CBATTRequest *)request {
     if (request) {
         NSMutableDictionary *userInfo = [[NSMutableDictionary alloc] init];
@@ -111,6 +127,7 @@
         [[NSNotificationCenter defaultCenter] postNotificationName:PN_didGetReadRequest object:nil userInfo:userInfo];
     }
 }
+
 - (void)peripheralManager:(CBPeripheralManager *)peripheral didReceiveWriteRequests:(NSArray<CBATTRequest *> *)requests {
     if (requests.count) {
         NSMutableDictionary *userInfo = [[NSMutableDictionary alloc] init];
@@ -119,7 +136,9 @@
         [[NSNotificationCenter defaultCenter] postNotificationName:PN_didGetWriteRequest object:nil userInfo:userInfo];
     }
 }
+
 - (void)peripheralManagerIsReadyToUpdateSubscribers:(CBPeripheralManager *)peripheral {}
+
 - (void)peripheralManager:(CBPeripheralManager *)peripheral central:(CBCentral *)central didSubscribeToCharacteristic:(CBCharacteristic *)characteristic {
     if (![_subscribedCharacterstics containsObject:characteristic])
         [_subscribedCharacterstics addObject:(CBMutableCharacteristic *)characteristic];
@@ -130,6 +149,7 @@
     
     [[NSNotificationCenter defaultCenter] postNotificationName:PN_didConnected object:nil userInfo:userInfo];
 }
+
 - (void)peripheralManager:(CBPeripheralManager *)peripheral central:(CBCentral *)central didUnsubscribeFromCharacteristic:(CBCharacteristic *)characteristic {
     if ([_subscribedCharacterstics containsObject:characteristic])
         [_subscribedCharacterstics removeObject:(CBMutableCharacteristic *)characteristic];

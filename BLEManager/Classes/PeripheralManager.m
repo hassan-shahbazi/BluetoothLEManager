@@ -20,6 +20,7 @@
 - (id)init {
     self = [super init];
     if (self) {
+        _observers = [[NSDictionary alloc] init];
         _subscribedCharacterstics = [[NSMutableArray alloc] init];
         _services = [[NSMutableArray alloc] init];
         

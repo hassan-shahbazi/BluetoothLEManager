@@ -24,24 +24,15 @@
 
 - (void)PeripheralDidGetRead:(CBATTRequest *)request;
 
-- (void)PeripheralDidGetWrite:(CBATTRequest *)requests;
+- (void)PeripheralDidGetWrite:(NSArray<CBATTRequest *>*)requests;
 
 - (void)PeripheralDidRestored;
 @end
 
-#define PN_StateUpdate              @"blePeripheralManagerStateDidUpdate"
-#define PN_didStartAdvertising      @"blePeripheralManagerDidStartAdvertising"
-#define PN_didRestore               @"blePeripheralManagerDidRestore"
-#define PN_didGetReadRequest        @"blePeripheralManagerGetReadRequest"
-#define PN_didGetWriteRequest       @"blePeripheralManagerGetWriteRequest"
-#define PN_didConnected             @"blePeripheralManagerDidConnected"
-#define PN_didDisonnected           @"blePeripheralManagerDidDisonnected"
-
-
 @interface Peripheral : NSObject <CBPeripheralManagerDelegate>
 
 
-@property (nonatomic, strong) NSDictionary *observers;
+@property (nonatomic, strong) NSMutableDictionary *observers;
 /**
  UUID of main service
  */
@@ -62,8 +53,18 @@
  */
 + (Peripheral *)sharedInstance;
 
+/**
+ Add observer for any changes on peripheral object
+
+ @param observer The class which has implemented PeripheralManagerObserver protocol
+ */
 - (void)addObserver:(id<PeripheralManagerObserver>)observer;
 
+/**
+ Remove observers' of peripheral changes
+
+ @param observer The class which has implemented PeripheralManagerObserver protocol
+ */
 - (void)removeObserver:(id<PeripheralManagerObserver>)observer;
 
 /**

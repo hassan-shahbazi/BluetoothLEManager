@@ -41,7 +41,7 @@
 @interface Peripheral : NSObject <CBPeripheralManagerDelegate>
 
 
-@property (nonatomic, assign) NSDictionary *observers;
+@property (nonatomic, strong) NSDictionary *observers;
 /**
  UUID of main service
  */

@@ -11,12 +11,32 @@
 
 @interface MyCharacterstic : NSObject
 
-@property (nonatomic, strong) CBUUID *UUID;
-@property (nonatomic, strong) NSData *Value;
-@property (nonatomic, nullable, strong) NSArray<CBDescriptor *>* Descriptor;
-@property (nonatomic, assign) CBAttributePermissions Permission;
-@property (nonatomic, assign) CBCharacteristicProperties Property;
+/**
+ Characteristic's UUID
+ */
+@property (nonatomic, strong) CBUUID *uuid;
+/**
+ Characteristic's static value
+ */
+@property (nonatomic, strong) NSData *value;
+/**
+ Characteristic's descriptors
+ */
+@property (nonatomic, nullable, strong) NSArray<CBDescriptor *>* descriptor;
+/**
+ Characteristic's permissions
+ */
+@property (nonatomic, assign) CBAttributePermissions permission;
+/**
+ Characteristic's properties
+ */
+@property (nonatomic, assign) CBCharacteristicProperties property;
 
-- (CBMutableCharacteristic *)GetObject;
+/**
+ Get CBMutableCharacteristic object from built characteristic
+
+ @return CBMutableCharacteristic instance
+ */
+- (CBMutableCharacteristic *)object;
 
 @end

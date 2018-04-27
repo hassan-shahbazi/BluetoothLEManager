@@ -34,7 +34,7 @@
     
 }
 
-+ (CentralManager *)instance {
++ (CentralManager *)sharedInstance {
     static CentralManager *singleton = nil;
     if (!singleton) {
         singleton = [CentralManager new];

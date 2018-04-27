@@ -102,7 +102,7 @@
  */
 @property (nonatomic, strong) NSMutableDictionary *observers;
 
-+ (CentralManager *)instance;
++ (CentralManager *)sharedInstance;
 
 /**
  Add observer for any central on peripheral object

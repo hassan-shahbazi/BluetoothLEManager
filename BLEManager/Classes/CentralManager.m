@@ -21,7 +21,7 @@
 - (id)init {
     self = [super init];
     if (self) {
-        _discovery_RSSI_filter = -50;
+        _discoveryRSSI = -50;
         _discoveredCharacterstics = [NSMutableArray new];
         
         dispatch_queue_t queue = dispatch_queue_create("BLEManager.Central", DISPATCH_QUEUE_CONCURRENT);
@@ -33,12 +33,25 @@
     return self;
     
 }
+
 + (CentralManager *)instance {
     static CentralManager *singleton = nil;
     if (!singleton) {
         singleton = [CentralManager new];
     }
     return singleton;
+}
+
+- (void)addObserver:(id<CentralManagerObserver>)observer {
+    NSString *observerID = observer.debugDescription;
+    if (![_observers valueForKey:observerID])
+        [_observers setValue:observer forKey:observerID];
+}
+
+- (void)removeObserver:(id<CentralManagerObserver>)observer {
+    NSString *observerID = observer.debugDescription;
+    if (![_observers valueForKey:observerID])
+        [_observers removeObjectForKey:observerID];
 }
 
 - (void)connect {
@@ -53,7 +66,7 @@
 }
 
 - (void)getPairedList {
-    NSArray *pairedPeriperhals = [_manager retrieveConnectedPeripheralsWithServices:_service_UUID];
+    NSArray *pairedPeriperhals = [_manager retrieveConnectedPeripheralsWithServices:_serviceUUID];
     [self centralManager:_manager didDiscoverPairedPeripherals: pairedPeriperhals];
 }
 
@@ -65,7 +78,7 @@
 - (void)scan {
     [self disconnect];
     [self stopScan];
-    [_manager scanForPeripheralsWithServices:_service_UUID options:nil];
+    [_manager scanForPeripheralsWithServices:_serviceUUID options:nil];
 }
 
 - (void)stopScan {
@@ -111,40 +124,41 @@
 
 #pragma mark - Central Manager Delegate
 - (void)centralManagerDidUpdateState:(CBCentralManager *)central {
-    NSMutableDictionary *userInfo = [[NSMutableDictionary alloc] init];
-    [userInfo setObject:[NSNumber numberWithInt:central.state] forKey:@"State"];
-    
-    [[NSNotificationCenter defaultCenter] postNotificationName:CN_StateUpdate object:nil userInfo: userInfo];
+    for (id<CentralManagerObserver> observer in [_observers allValues])
+        [observer CentralStateDidUpdated: central.state];
 }
+
 - (void)centralManager:(CBCentralManager *)central didDiscoverPeripheral:(CBPeripheral *)peripheral advertisementData:(NSDictionary<NSString *,id> *)advertisementData RSSI:(NSNumber *)RSSI {
     _manager = central;
     _periperal = peripheral;
     _periperal.delegate = self;
     
-    if (RSSI.integerValue > _discovery_RSSI_filter && RSSI.integerValue < 0) {
-        NSMutableDictionary *userInfo = [[NSMutableDictionary alloc] init];
-        [userInfo setObject:peripheral.identifier.UUIDString forKey:@"MacAddress"];
-        
-        [[NSNotificationCenter defaultCenter] postNotificationName:CN_didFound object:nil userInfo: userInfo];
+    if (RSSI.integerValue > _discoveryRSSI && RSSI.integerValue < 0) {
+        for (id<CentralManagerObserver> observer in [_observers allValues])
+            [observer CentralDidFound:peripheral.identifier.UUIDString];
     }
 }
+
 - (void)centralManager:(CBCentralManager *)central didConnectPeripheral:(CBPeripheral *)peripheral {
     [self Save: peripheral.identifier.UUIDString];
     [central stopScan];
     
-    [_periperal discoverServices: _service_UUID];
-    [[NSNotificationCenter defaultCenter] postNotificationName:CN_didConnect object:nil];
+    [_periperal discoverServices: _serviceUUID];
+    for (id<CentralManagerObserver> observer in [_observers allValues])
+        [observer CentralDidConnected];
 }
+
 - (void)centralManager:(CBCentralManager *)central didFailToConnectPeripheral:(CBPeripheral *)peripheral error:(NSError *)error {
-    NSMutableDictionary *userInfo = [[NSMutableDictionary alloc] init];
-    [userInfo setObject:error.localizedDescription forKey:@"Error"];
-    
-    [[NSNotificationCenter defaultCenter] postNotificationName:CN_didFailed object:nil userInfo: userInfo];
+    for (id<CentralManagerObserver> observer in [_observers allValues])
+        [observer CentralDidFailed:error];
 }
+
 - (void)centralManager:(CBCentralManager *)central didDisconnectPeripheral:(CBPeripheral *)peripheral error:(NSError *)error {
     [self RemoveSavedPeripheralMac];
-    [[NSNotificationCenter defaultCenter] postNotificationName:CN_didDisconnect object:nil];
+    for (id<CentralManagerObserver> observer in [_observers allValues])
+        [observer CentralDidDisconnected];
 }
+
 - (void)centralManager:(CBCentralManager *)central willRestoreState:(NSDictionary<NSString *,id> *)dict {
     NSArray *restoredPeripherals = [dict valueForKey: CBCentralManagerRestoredStatePeripheralsKey];
     if (restoredPeripherals)
@@ -153,35 +167,36 @@
                 _manager = central;
                 _periperal = peripheral;
                 _periperal.delegate = self;
-                [[NSNotificationCenter defaultCenter] postNotificationName:CN_didRestored object:nil];
+                for (id<CentralManagerObserver> observer in [_observers allValues])
+                    [observer CentralDidRestored];
             }
 }
+
 - (void)centralManager:(CBCentralManager *)central didDiscoverPairedPeripherals:(NSArray *)peripherals {
     _manager = central;
-    
-    NSMutableDictionary *userInfo = [[NSMutableDictionary alloc] init];
-    [userInfo setObject:peripherals forKey:@"PairedList"];
-    
-    [[NSNotificationCenter defaultCenter] postNotificationName:CN_PairedList object:nil userInfo: userInfo];
+    for (id<CentralManagerObserver> observer in [_observers allValues])
+        [observer CentralPairedList:peripherals];
 }
 
 #pragma mark - Peripheral Delegate
 - (void)peripheralDidUpdateName:(CBPeripheral *)peripheral {}
+
 - (void)peripheral:(CBPeripheral *)peripheral didDiscoverServices:(NSError *)error {
     for (CBService *service in peripheral.services) {
-        if ([_service_UUID containsObject: service.UUID]) {
-            [peripheral discoverCharacteristics:_service_characteristic forService:service];
-            [peripheral discoverCharacteristics:_service_notifyCharacteristic forService:service];
+        if ([_serviceUUID containsObject: service.UUID]) {
+            [peripheral discoverCharacteristics:_serviceCharacteristics forService:service];
+            [peripheral discoverCharacteristics:_serviceNotifyCharacteristics forService:service];
         }
     }
 }
+
 - (void)peripheral:(CBPeripheral *)peripheral didReadRSSI:(NSNumber *)RSSI error:(NSError *)error {
-    NSMutableDictionary *userInfo = [[NSMutableDictionary alloc] init];
-    [userInfo setObject:[NSNumber numberWithInt:RSSI.intValue] forKey:@"RSSIValue"];
-    
-    [[NSNotificationCenter defaultCenter] postNotificationName:CN_didReadRSSI object:nil userInfo: userInfo];
+    for (id<CentralManagerObserver> observer in [_observers allValues])
+        [observer CentralDidReadRSSI:RSSI];
 }
+
 - (void)peripheral:(CBPeripheral *)peripheral didWriteValueForDescriptor:(CBDescriptor *)descriptor error:(NSError *)error {}
+
 - (void)peripheral:(CBPeripheral *)peripheral didDiscoverCharacteristicsForService:(CBService *)service error:(NSError *)error {
     for (CBCharacteristic *characteristic in service.characteristics) {
         BOOL duplicatedCharacterstic = false;
@@ -190,25 +205,30 @@
                 duplicatedCharacterstic = true;
         if (!duplicatedCharacterstic)
             [_discoveredCharacterstics addObject: characteristic];
-        if ([_service_notifyCharacteristic containsObject:characteristic.UUID])
+        if ([_serviceNotifyCharacteristics containsObject:characteristic.UUID])
             [peripheral setNotifyValue:YES forCharacteristic:characteristic];
     }
 }
+
 - (void)peripheral:(CBPeripheral *)peripheral didModifyServices:(NSArray<CBService *> *)invalidatedServices {}
+
 - (void)peripheral:(CBPeripheral *)peripheral didUpdateValueForDescriptor:(CBDescriptor *)descriptor error:(NSError *)error {}
+
 - (void)peripheral:(CBPeripheral *)peripheral didWriteValueForCharacteristic:(CBCharacteristic *)characteristic error:(NSError *)error {
-    [[NSNotificationCenter defaultCenter] postNotificationName:CN_didWriteData object:nil];
+    for (id<CentralManagerObserver> observer in [_observers allValues])
+        [observer CentralDidWriteData];
 }
+
 - (void)peripheral:(CBPeripheral *)peripheral didUpdateValueForCharacteristic:(CBCharacteristic *)characteristic error:(NSError *)error {
     if (characteristic.value) {
-        NSMutableDictionary *userInfo = [[NSMutableDictionary alloc] init];
-        [userInfo setObject:characteristic.value forKey:@"Data"];
-        
-        [[NSNotificationCenter defaultCenter] postNotificationName:CN_didReadData object:nil userInfo: userInfo];
+        for (id<CentralManagerObserver> observer in [_observers allValues])
+            [observer CentralDidReadData:characteristic.value];
     }
 }
 - (void)peripheral:(CBPeripheral *)peripheral didDiscoverIncludedServicesForService:(CBService *)service error:(NSError *)error {}
+
 - (void)peripheral:(CBPeripheral *)peripheral didDiscoverDescriptorsForCharacteristic:(CBCharacteristic *)characteristic error:(NSError *)error {}
+
 - (void)peripheral:(CBPeripheral *)peripheral didUpdateNotificationStateForCharacteristic:(CBCharacteristic *)characteristic error:(NSError *)error {}
 
 @end

@@ -22,7 +22,7 @@
 
 @optional
 /**
- This function will be fired if the advertisement start successfully
+ This function will be fired if the advertisement starts successfully
  */
 - (void)PeripheralDidStartAdvertising;
 

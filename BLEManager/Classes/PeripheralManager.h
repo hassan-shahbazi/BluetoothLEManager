@@ -13,34 +13,73 @@
 
 @protocol PeripheralManagerObserver <NSObject>
 @required
+/**
+ Any changes in the device's bluetooth state make this function to be fired
+
+ @param state New state of device's bluetooth
+ */
 - (void)PeripheralStateDidUpdated:(CBManagerState )state;
 
 @optional
+/**
+ This function will be fired if the advertisement start successfully
+ */
 - (void)PeripheralDidStartAdvertising;
 
+/**
+ Once one Central start to subscribe on one the available characteristics
+
+ @param central The central which did subscription
+ @param characteristic The characteristic which have been subscribed
+ */
 - (void)PeripheralDidConnect:(CBCentral *)central toCharacteristic:(CBCharacteristic *)characteristic;
 
+/**
+ Once one Central unsubscribe the characteristics
+
+ @param central The central which did unsubscription
+ @param characteristic The characteristic which have been unsubscribed
+ */
 - (void)PeripheralDidDisonnect:(CBCentral *)central fromCharacteristic:(CBCharacteristic *)characteristic;
 
+/**
+ Read request from a Central on one characteristic
+
+ @param request The read request
+ */
 - (void)PeripheralDidGetRead:(CBATTRequest *)request;
 
+/**
+ Write request from a Central on one characteristic
+
+ @param requests The write request
+ */
 - (void)PeripheralDidGetWrite:(NSArray<CBATTRequest *>*)requests;
 
+/**
+ In case of restoring peripheral object, it is called
+ */
 - (void)PeripheralDidRestored;
 @end
 
 @interface Peripheral : NSObject <CBPeripheralManagerDelegate>
 
 
+/**
+ An array of registered observers which will be notified once above functions happen
+ */
 @property (nonatomic, strong) NSMutableDictionary *observers;
+
 /**
  UUID of main service
  */
 @property (nonatomic, strong) CBUUID *serviceUUID;
+
 /**
  Characteristics available on the main service
  */
 @property (nonatomic, strong) NSArray *serviceCharacteristics;
+
 /**
  Advertisement local name
  */

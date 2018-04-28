@@ -16,7 +16,7 @@ Pod::Spec.new do |s|
   #
 
   s.name         = "BluetoothLEManager"
-  s.version      = "1.0.0"
+  s.version      = "1.0.1"
   s.summary      = "BluetoothLEManager is a library to manage BLE-related tasks"
   s.source       = { :git => "https://github.com/Hassaniiii/BLEManager.git", :branch => "master", :tag => "1.0.0" }
 

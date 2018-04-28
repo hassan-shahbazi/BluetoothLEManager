@@ -19,10 +19,12 @@ It is written in *Objective-c* usable in both *Objective-c* and *Swift*. It is s
 These instructions will help you to add `BluetoothLEManager` to your current Xcode project in a few lines
 
 ### Installation
-The easiest way to use *BluetoothLEManager* is `Cocoapods`
+#### Cocoapods
+The easiest way to import *BluetoothLEManager* to your current project is to use `Cocoapods`. Just add the following to your `Podfile`
 
-`pod 'BluetoothLEManager'
+`pod 'BluetoothLEManager'`
 
+#### Manual
 You can also download the whole code manually and copy the following classes to your project based on your needs
 ```
 CentralManager.h

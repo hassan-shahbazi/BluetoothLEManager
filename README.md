@@ -21,7 +21,7 @@ These instructions will help you to add `BluetoothLEManager` to your current Xco
 ### Installation
 The easiest way to use *BluetoothLEManager* is `Cocoapods`
 
-`pod 'BluetoothLEManager', '~> 1.0'`
+`pod 'BluetoothLEManager'
 
 You can also download the whole code manually and copy the following classes to your project based on your needs
 ```

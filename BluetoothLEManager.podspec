@@ -18,7 +18,7 @@ Pod::Spec.new do |s|
   s.name         = "BluetoothLEManager"
   s.version      = "1.0.2"
   s.summary      = "BluetoothLEManager is a library to manage BLE-related tasks"
-  s.source       = { :git => "https://github.com/Hassaniiii/BLEManager.git", :branch => "master", :tag => "1.0.0" }
+  s.source       = { :git => "https://github.com/Hassaniiii/BLEManager.git", :branch => "master", :tag => s.version.to_s }
 
   # This description is used to generate tags and improve search results.
   #   * Think: What does it do? Why did you write it? What is the focus?

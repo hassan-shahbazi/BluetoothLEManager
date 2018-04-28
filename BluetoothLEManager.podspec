@@ -16,7 +16,7 @@ Pod::Spec.new do |s|
   #
 
   s.name         = "BluetoothLEManager"
-  s.version      = "1.0.3"
+  s.version      = "1.0.4"
   s.summary      = "BluetoothLEManager is a library to manage BLE-related tasks"
   s.source       = { :git => "https://github.com/Hassaniiii/BLEManager.git", :branch => "master", :tag => s.version.to_s }
 
@@ -39,7 +39,7 @@ Pod::Spec.new do |s|
   #  Popular ones are 'MIT', 'BSD' and 'Apache License, Version 2.0'.
   #
 
-  s.license      = { :type => "GNU", :file => "LICENSE.txt" }
+  s.license      = { :type => "GNU", :file => "LICENSE.md" }
 
 
   # ――― Author Metadata  ――――――――――――――――――――――――――――――――――――――――――――――――――――――――― #

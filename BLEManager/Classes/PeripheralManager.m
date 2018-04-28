@@ -63,7 +63,7 @@
 }
 
 - (void)removeService:(CBUUID *)uuid {
-    CBMutableService *Service = [CBMutableService new];
+    CBMutableService *Service = _mainService;
     for (CBMutableService *service in _services)
         if ([service.UUID isEqual:uuid])
             Service = service;

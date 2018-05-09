@@ -23,6 +23,7 @@
     if (self) {
         _discoveryRSSI = -50;
         _discoveredCharacterstics = [NSMutableArray new];
+        _observers = [[NSMutableDictionary alloc] init];
         
         dispatch_queue_t queue = dispatch_queue_create("BLEManager.Central", DISPATCH_QUEUE_CONCURRENT);
         _manager = [[CBCentralManager alloc]

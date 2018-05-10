@@ -24,7 +24,14 @@
 
  @param macAddress Mac address of peripherals
  */
-- (void)CentralDidFound:(NSString *)macAddress;
+- (void)CentralDidFoundMacAddress:(NSString *)macAddress;
+
+/**
+ Central did found peripherals which are advertising the same service UUID it is searching for.
+ 
+ @param peripheral CBPeripheral object
+ */
+- (void)CentralDidFoundPeripheral:(CBPeripheral *)peripheral;
 
 /**
  Fired when central connected to the peripheral successfully

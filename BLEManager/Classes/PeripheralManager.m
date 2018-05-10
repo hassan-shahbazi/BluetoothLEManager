@@ -114,7 +114,8 @@
 #pragma mark - Peripheral Manager Delegate
 - (void)peripheralManagerDidUpdateState:(CBPeripheralManager *)peripheral {
     for (id<PeripheralManagerObserver> observer in [_observers allValues])
-        [observer PeripheralStateDidUpdated: peripheral.state];
+        if ([observer respondsToSelector:@selector(PeripheralStateDidUpdated:)])
+            [observer PeripheralStateDidUpdated: peripheral.state];
 }
 
 - (void)peripheralManager:(CBPeripheralManager *)peripheral didAddService:(CBService *)service error:(NSError *)error {
@@ -124,7 +125,8 @@
 
 - (void)peripheralManagerDidStartAdvertising:(CBPeripheralManager *)peripheral error:(NSError *)error {
     for (id<PeripheralManagerObserver> observer in [_observers allValues])
-        [observer PeripheralDidStartAdvertising];
+        if ([observer respondsToSelector:@selector(PeripheralDidStartAdvertising)])
+            [observer PeripheralDidStartAdvertising];
 }
 
 - (void)peripheralManager:(CBPeripheralManager *)peripheral willRestoreState:(NSDictionary<NSString *,id> *)dict {}
@@ -132,13 +134,15 @@
 - (void)peripheralManager:(CBPeripheralManager *)peripheral didReceiveReadRequest:(CBATTRequest *)request {
     if (request)
         for (id<PeripheralManagerObserver> observer in [_observers allValues])
-            [observer PeripheralDidGetRead:request];
+            if ([observer respondsToSelector:@selector(PeripheralDidGetRead:)])
+                [observer PeripheralDidGetRead:request];
 }
 
 - (void)peripheralManager:(CBPeripheralManager *)peripheral didReceiveWriteRequests:(NSArray<CBATTRequest *> *)requests {
     if (requests.count)
         for (id<PeripheralManagerObserver> observer in [_observers allValues])
-            [observer PeripheralDidGetWrite:requests];
+            if ([observer respondsToSelector:@selector(PeripheralDidGetWrite:)])
+                [observer PeripheralDidGetWrite:requests];
 }
 
 - (void)peripheralManagerIsReadyToUpdateSubscribers:(CBPeripheralManager *)peripheral {}
@@ -148,7 +152,8 @@
         [_subscribedCharacterstics addObject:(CBMutableCharacteristic *)characteristic];
     
     for (id<PeripheralManagerObserver> observer in [_observers allValues])
-        [observer PeripheralDidConnect:central toCharacteristic:characteristic];
+        if ([observer respondsToSelector:@selector(PeripheralDidConnect:toCharacteristic:)])
+            [observer PeripheralDidConnect:central toCharacteristic:characteristic];
 }
 
 - (void)peripheralManager:(CBPeripheralManager *)peripheral central:(CBCentral *)central didUnsubscribeFromCharacteristic:(CBCharacteristic *)characteristic {
@@ -156,6 +161,7 @@
         [_subscribedCharacterstics removeObject:(CBMutableCharacteristic *)characteristic];
     
     for (id<PeripheralManagerObserver> observer in [_observers allValues])
-        [observer PeripheralDidDisonnect:central fromCharacteristic:characteristic];
+        if ([observer respondsToSelector:@selector(PeripheralDidDisonnect:fromCharacteristic:)])
+            [observer PeripheralDidDisonnect:central fromCharacteristic:characteristic];
 }
 @end

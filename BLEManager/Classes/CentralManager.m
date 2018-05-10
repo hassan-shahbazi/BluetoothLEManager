@@ -61,6 +61,7 @@
         [_manager connectPeripheral:_periperal options:nil];
     }
 }
+
 - (void)connect:(CBPeripheral *)peripheral {
     _periperal = peripheral;
     [self connect];
@@ -99,6 +100,7 @@
 - (void)write:(NSData *)data on:(CBUUID *)Characterstic {
     [self write:data on:Characterstic with:CBCharacteristicWriteWithResponse];
 }
+
 - (void)write:(NSData *)data on:(CBUUID *)Characterstic with:(CBCharacteristicWriteType )type {
     for (CBCharacteristic *characterstic in _discoveredCharacterstics)
         if ([characterstic.UUID.UUIDString isEqualToString: Characterstic.UUIDString])
@@ -116,9 +118,11 @@
     [[NSUserDefaults standardUserDefaults] setValue:peripheralMac forKey:VANCOSYS_KEY];
     [[NSUserDefaults standardUserDefaults] synchronize];
 }
+
 - (NSString *)GetPeripheralMac {
     return [[NSUserDefaults standardUserDefaults] objectForKey:VANCOSYS_KEY];
 }
+
 - (void)RemoveSavedPeripheralMac {
     [[NSUserDefaults standardUserDefaults] removeObjectForKey:VANCOSYS_KEY];
 }
@@ -126,7 +130,8 @@
 #pragma mark - Central Manager Delegate
 - (void)centralManagerDidUpdateState:(CBCentralManager *)central {
     for (id<CentralManagerObserver> observer in [_observers allValues])
-        [observer CentralStateDidUpdated: central.state];
+        if ([observer respondsToSelector:@selector(CentralStateDidUpdated:)])
+            [observer CentralStateDidUpdated: central.state];
 }
 
 - (void)centralManager:(CBCentralManager *)central didDiscoverPeripheral:(CBPeripheral *)peripheral advertisementData:(NSDictionary<NSString *,id> *)advertisementData RSSI:(NSNumber *)RSSI {
@@ -135,8 +140,12 @@
     _periperal.delegate = self;
     
     if (RSSI.integerValue > _discoveryRSSI && RSSI.integerValue < 0) {
-        for (id<CentralManagerObserver> observer in [_observers allValues])
-            [observer CentralDidFound:peripheral.identifier.UUIDString];
+        for (id<CentralManagerObserver> observer in [_observers allValues]) {
+            if ([observer respondsToSelector:@selector(CentralDidFoundMacAddress:)])
+                [observer CentralDidFoundMacAddress:peripheral.identifier.UUIDString];
+            if ([observer respondsToSelector:@selector(CentralDidFoundPeripheral:)])
+                ([observer CentralDidFoundPeripheral:peripheral]);
+        }
     }
 }
 
@@ -146,18 +155,21 @@
     
     [_periperal discoverServices: _serviceUUID];
     for (id<CentralManagerObserver> observer in [_observers allValues])
-        [observer CentralDidConnected];
+        if ([observer respondsToSelector:@selector(CentralDidConnected)])
+            [observer CentralDidConnected];
 }
 
 - (void)centralManager:(CBCentralManager *)central didFailToConnectPeripheral:(CBPeripheral *)peripheral error:(NSError *)error {
     for (id<CentralManagerObserver> observer in [_observers allValues])
-        [observer CentralDidFailed:error];
+        if ([observer respondsToSelector:@selector(CentralDidFailed:)])
+            [observer CentralDidFailed:error];
 }
 
 - (void)centralManager:(CBCentralManager *)central didDisconnectPeripheral:(CBPeripheral *)peripheral error:(NSError *)error {
     [self RemoveSavedPeripheralMac];
     for (id<CentralManagerObserver> observer in [_observers allValues])
-        [observer CentralDidDisconnected];
+        if ([observer respondsToSelector:@selector(CentralDidDisconnected)])
+            [observer CentralDidDisconnected];
 }
 
 - (void)centralManager:(CBCentralManager *)central willRestoreState:(NSDictionary<NSString *,id> *)dict {
@@ -169,14 +181,16 @@
                 _periperal = peripheral;
                 _periperal.delegate = self;
                 for (id<CentralManagerObserver> observer in [_observers allValues])
-                    [observer CentralDidRestored];
+                    if ([observer respondsToSelector:@selector(CentralDidRestored)])
+                        [observer CentralDidRestored];
             }
 }
 
 - (void)centralManager:(CBCentralManager *)central didDiscoverPairedPeripherals:(NSArray *)peripherals {
     _manager = central;
     for (id<CentralManagerObserver> observer in [_observers allValues])
-        [observer CentralPairedList:peripherals];
+        if ([observer respondsToSelector:@selector(CentralPairedList:)])
+            [observer CentralPairedList:peripherals];
 }
 
 #pragma mark - Peripheral Delegate
@@ -193,7 +207,8 @@
 
 - (void)peripheral:(CBPeripheral *)peripheral didReadRSSI:(NSNumber *)RSSI error:(NSError *)error {
     for (id<CentralManagerObserver> observer in [_observers allValues])
-        [observer CentralDidReadRSSI:RSSI];
+        if ([observer respondsToSelector:@selector(CentralDidReadRSSI:)])
+            [observer CentralDidReadRSSI:RSSI];
 }
 
 - (void)peripheral:(CBPeripheral *)peripheral didWriteValueForDescriptor:(CBDescriptor *)descriptor error:(NSError *)error {}
@@ -217,15 +232,18 @@
 
 - (void)peripheral:(CBPeripheral *)peripheral didWriteValueForCharacteristic:(CBCharacteristic *)characteristic error:(NSError *)error {
     for (id<CentralManagerObserver> observer in [_observers allValues])
-        [observer CentralDidWriteData];
+        if ([observer respondsToSelector:@selector(CentralDidWriteData)])
+            [observer CentralDidWriteData];
 }
 
 - (void)peripheral:(CBPeripheral *)peripheral didUpdateValueForCharacteristic:(CBCharacteristic *)characteristic error:(NSError *)error {
     if (characteristic.value) {
         for (id<CentralManagerObserver> observer in [_observers allValues])
-            [observer CentralDidReadData:characteristic.value];
+            if ([observer respondsToSelector:@selector(CentralDidReadData:)])
+                [observer CentralDidReadData:characteristic.value];
     }
 }
+
 - (void)peripheral:(CBPeripheral *)peripheral didDiscoverIncludedServicesForService:(CBService *)service error:(NSError *)error {}
 
 - (void)peripheral:(CBPeripheral *)peripheral didDiscoverDescriptorsForCharacteristic:(CBCharacteristic *)characteristic error:(NSError *)error {}

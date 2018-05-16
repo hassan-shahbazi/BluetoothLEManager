@@ -1,5 +1,5 @@
 # BluetoothLEManager
-![build status](https://travis-ci.org/Hassaniiii/BLEManager.svg?branch=master)
+![build status](https://travis-ci.org/Hassaniiii/BluetoothLEManager.svg?branch=master)
 
 Most completed library to deal with BLE-related implementations (Central, Peripheral)
 

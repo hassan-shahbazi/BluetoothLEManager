@@ -1,5 +1,7 @@
 # BluetoothLEManager
 ![build status](https://travis-ci.org/Hassaniiii/BluetoothLEManager.svg?branch=master)
+![cocoapods compatible](https://img.shields.io/badge/Cocoapods-compatible-4BC51D.svg?style=flat)
+![Licence](https://img.shields.io/github/license/Hassaniiii/BluetoothLEManager.svg)
 
 Most completed library to deal with BLE-related implementations (Central, Peripheral)
 
